@@ -3,6 +3,8 @@
 
 2022.9.9	K.L.	<k.l.lambda@gmail.com>
 
+	+	App folder created, rollup config setup.
+
 	|	Project setup.
 
 

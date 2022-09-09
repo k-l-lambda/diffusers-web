@@ -1,6 +1,7 @@
 
 import path from "path";
 import vue from "rollup-plugin-vue";
+import postcss from "rollup-plugin-postcss";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
@@ -9,9 +10,6 @@ import resolve from "@rollup/plugin-node-resolve";
 
 export default [
 	"index",
-	"projector",
-	"merger",
-	"mappingViewer",
 ].map(entry => ({
 	input: `./app/${entry}.js`,
 
@@ -21,7 +19,12 @@ export default [
 	},
 
 	plugins: [
+		vue({
+			preprocessStyles: true,
+		}),
+		postcss(),
 		replace({
+			preventAssignment: true,
 			"process.env.NODE_ENV": JSON.stringify("development"),
 			"process.env.VUE_ENV": JSON.stringify("browser"),
 		}),
@@ -30,6 +33,5 @@ export default [
 			preferBuiltins: false,
 			browser: true,
 		}),
-		vue(),
 	],
 }));
