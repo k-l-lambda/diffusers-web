@@ -39,7 +39,7 @@
 				};
 				this.results.push(item);
 
-				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=1`);
+				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=1&n_steps=50&w=512&h=512`);
 				const result = await response.json();
 				//console.log("result:", result);
 
