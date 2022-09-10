@@ -2,6 +2,23 @@
 	<div class="home">
 		<header>
 			<input class="description" v-model="description" type="text" />
+			<StoreInput type="number" v-model="n_steps" min="1" v-show="false" />
+			<StoreInput type="number" v-model="multi" v-show="false" />
+			<StoreInput type="number" v-model="width" v-show="false" />
+			<StoreInput type="number" v-model="height" v-show="false" />
+			<input type="number" v-model="n_steps" min="1" max="1000" :size="1" />
+			<select v-model="multi">
+				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
+			</select>
+			<span>
+				<select v-model="width">
+					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
+				</select>
+				&times;
+				<select v-model="height">
+					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
+				</select>
+			</span>
 			<button @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main>
@@ -19,14 +36,27 @@
 </template>
 
 <script>
+	import StoreInput from "./storeinput.vue";
+
+
+
 	export default {
 		name: "index",
+
+
+		components: {
+			StoreInput,
+		},
 
 
 		data () {
 			return {
 				description: null,
 				results: [],
+				multi: 1,
+				n_steps: 50,
+				width: 512,
+				height: 512,
 			};
 		},
 
@@ -39,7 +69,7 @@
 				};
 				this.results.push(item);
 
-				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=1&n_steps=50&w=512&h=512`);
+				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`);
 				const result = await response.json();
 				//console.log("result:", result);
 
@@ -77,6 +107,17 @@
 	header .description
 	{
 		flex: 1 1;
+	}
+
+	header > *
+	{
+		flex: 0 0;
+		margin: 0 .2em;
+	}
+
+	header > * > *
+	{
+		height: 100%;
 	}
 
 	header button
