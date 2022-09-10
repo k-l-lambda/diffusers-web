@@ -25,9 +25,10 @@
 			<section v-for="(result, i) of results" :key="i">
 				<div><em>{{result.prompt}}</em><span v-if="result.loading">...</span></div>
 				<div v-if="result.images">
-					<img v-for="(img, ii) of result.images" :key="ii"
-						:src="img"
-					/>
+					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
+						<img :src="img" />
+						<a class="download" :href="img" :download="`${result.prompt.replace(/[^\w]/g, '')}.png`">&#x2913;</a>
+					</div>
 				</div>
 				<hr />
 			</section>
@@ -136,8 +137,24 @@
 		padding: 1em;
 	}
 
-	main section img
+	main section .picture
 	{
+		position: relative;
+		display: inline-block;
 		margin: 4px;
+	}
+
+	main section .picture .download
+	{
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		visibility: hidden;
+		font-size: 28px;
+	}
+
+	main section .picture:hover .download
+	{
+		visibility: visible;
 	}
 </style>
