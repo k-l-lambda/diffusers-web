@@ -1,7 +1,8 @@
 <template>
 	<div class="home">
 		<header>
-			<input class="description" v-model="description" type="text" />
+			<input class="description" v-model="description" type="text" placeholder="prompt text" />
+			<StoreInput sessionKey="description" type="text" v-model="description" min="1" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" min="1" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
 			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
