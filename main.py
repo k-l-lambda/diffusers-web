@@ -32,6 +32,15 @@ for path in pageRouters:
 	app.route(path, endpoint = 'handler' + path)(getHandler(pageRouters[path]))
 
 
+@app.route('/paint-by-text', methods=['GET'])
+def paintByText():
+	prompt = flask.request.args.get('prompt')
+	multi = int(flask.request.args.get('multi', 1))
+	print('paint by text:', prompt, multi)
+
+	return flask.Response('{"result":"ok"}', mimetype = 'application/json')
+
+
 def main(argv):
 	global model_name
 	model_name = argv[1] if len(argv) > 1 else os.environ.get('MODEL_NAME')
