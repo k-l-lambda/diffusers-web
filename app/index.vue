@@ -7,7 +7,7 @@
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
 			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
 			<StoreInput sessionKey="size_h" type="number" v-model="height" v-show="false" />
-			<input type="number" v-model="n_steps" min="1" max="1000" :size="1" />
+			<input type="number" v-model="n_steps" min="1" max="250" :size="1" />
 			<select v-model="multi">
 				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
 			</select>
