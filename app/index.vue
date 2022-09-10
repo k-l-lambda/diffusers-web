@@ -28,7 +28,7 @@
 				<div v-if="result.images">
 					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
 						<img :src="img" />
-						<a class="download" :href="img" :download="`${result.prompt.replace(/[^\w]/g, '')}.png`">&#x2913;</a>
+						<a class="download" :href="img" :download="`${result.prompt.replace(/[^\w\s]/g, '').substr(0, 64)}.png`">&#x2913;</a>
 					</div>
 				</div>
 				<hr />
