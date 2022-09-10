@@ -135,4 +135,9 @@
 	{
 		padding: 1em;
 	}
+
+	main section img
+	{
+		margin: 4px;
+	}
 </style>
