@@ -43,6 +43,13 @@
 
 
 
+	const toBlobURL = async url => {
+		const blob = await (await fetch(url)).blob();
+		return URL.createObjectURL(blob);
+	};
+
+
+
 	export default {
 		name: "index",
 
@@ -75,6 +82,9 @@
 				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`);
 				if (response.ok) {
 					const result = await response.json();
+					if (result.images)
+						result.images = await Promise.all(result.images.map(toBlobURL));
+
 					Object.assign(item, result);
 				}
 				else
