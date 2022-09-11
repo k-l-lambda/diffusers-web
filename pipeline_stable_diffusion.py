@@ -58,7 +58,7 @@ class StableDiffusionPipeline(DiffusionPipeline):
 		unet: UNet2DConditionModel,
 		scheduler: Union[DDIMScheduler, PNDMScheduler, LMSDiscreteScheduler],
 		safety_checker: StableDiffusionSafetyChecker,
-		feature_extractor: CLIPFeatureExtractor,
+		#feature_extractor: CLIPFeatureExtractor,
 	):
 		super().__init__()
 		scheduler = scheduler.set_format("pt")
@@ -69,7 +69,7 @@ class StableDiffusionPipeline(DiffusionPipeline):
 			unet=unet,
 			scheduler=scheduler,
 			safety_checker=safety_checker,
-			feature_extractor=feature_extractor,
+			#feature_extractor=feature_extractor,
 		)
 
 	def enable_attention_slicing(self, slice_size: Optional[Union[str, int]] = "auto"):
