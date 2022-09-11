@@ -2,6 +2,8 @@
 import inspect
 import warnings
 from typing import List, Optional, Union
+import base64
+import struct
 
 import torch
 
@@ -12,6 +14,12 @@ from diffusers.pipeline_utils import DiffusionPipeline
 from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMScheduler
 from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+
+
+
+def encodeFloat32 (tensor):
+	tensor = tensor.flatten()
+	return base64.b64encode(struct.pack('f' * tensor.shape[0], *tensor)).decode('ascii')
 
 
 class StableDiffusionPipeline(DiffusionPipeline):
@@ -263,7 +271,9 @@ class StableDiffusionPipeline(DiffusionPipeline):
 		# scale and decode the image latents with vae
 		latents = 1 / 0.18215 * latents
 		image = self.vae.decode(latents).sample
-		print('latents:', latents.shape)
+		#print('latents:', latents.shape)
+
+		latent_codes = [encodeFloat32(l) for l in latents]
 
 		image = (image / 2 + 0.5).clamp(0, 1)
 		image = image.cpu().permute(0, 2, 3, 1).numpy()
@@ -279,4 +289,4 @@ class StableDiffusionPipeline(DiffusionPipeline):
 		if not return_dict:
 			return (image, has_nsfw_concept)
 
-		return StableDiffusionPipelineOutput(images=image, nsfw_content_detected=has_nsfw_concept)
+		return dict(images=image, latents=latent_codes, nsfw_content_detected=has_nsfw_concept)
