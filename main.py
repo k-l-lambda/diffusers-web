@@ -63,8 +63,8 @@ def paintByText():
 
 	result = {
 		'prompt': prompt,
-		'images': list(map(encodeImageToDataURL, result.images)),
-		'latents': result.latents,
+		'images': list(map(encodeImageToDataURL, result['images'])),
+		'latents': result['latents'],
 	}
 
 	return flask.Response(json.dumps(result), mimetype = 'application/json')
