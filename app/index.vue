@@ -24,13 +24,14 @@
 		</header>
 		<main>
 			<section v-for="(result, i) of results" :key="i">
-				<div><em>{{result.prompt}}</em><span v-if="result.loading">...</span></div>
+				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
 				<div v-if="result.images">
 					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
 						<img :src="img" />
-						<a class="download" :href="img" :download="`${result.prompt.replace(/[^\w\s]/g, '').substr(0, 64)}.png`">&#x2913;</a>
+						<a class="download" :href="img" :download="`${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
 					</div>
 				</div>
+				<p v-if="result.error" class="error" v-html="result.error"></p>
 				<hr />
 			</section>
 		</main>
@@ -72,10 +73,13 @@
 				this.results.push(item);
 
 				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`);
-				const result = await response.json();
-				//console.log("result:", result);
+				if (response.ok) {
+					const result = await response.json();
+					Object.assign(item, result);
+				}
+				else
+					item.error = await response.text();
 
-				Object.assign(item, result);
 				item.loading = false;
 			},
 		},
@@ -157,5 +161,10 @@
 	main section .picture:hover .download
 	{
 		visibility: visible;
+	}
+
+	main section .error
+	{
+		color: red;
 	}
 </style>
