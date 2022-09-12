@@ -7,6 +7,7 @@ import json
 import io
 import PIL.Image
 import base64
+import math
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
@@ -84,17 +85,20 @@ def img2img():
 
 	image = PIL.Image.open(imageFile.stream)
 
+	PIXELS_SIZE = 640 * 640
 	w, h = image.size
-	large_edge = max(w, h)
-	scaling = 1 if large_edge < 1024 else 1024 / large_edge
+	scaling = 1 if w * h <= PIXELS_SIZE else math.sqrt(PIXELS_SIZE / (w * h))
 	w, h = round(w * scaling / 64.) * 64, round(h * scaling / 64.) * 64
-	image = image.resize((w, h), resample=PIL.Image.Resampling.BICUBIC)
+	if w != image.size[0] or h != image.size[1]:
+		image = image.resize((w, h), resample=PIL.Image.BICUBIC)
+	#print('image:', image.size, scaling)
 
 	global pipe2
 	result = pipe2(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
 
 	result = {
 		'prompt': prompt,
+		'source': encodeImageToDataURL(image),
 		'image': encodeImageToDataURL(result['images'][0]),
 		'latent': result['latents'][0],
 	}
