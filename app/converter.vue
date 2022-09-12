@@ -17,11 +17,10 @@
 		<main>
 			<section v-for="(result, i) of results" :key="i">
 				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
-				<div v-if="result.images">
-					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
-						<img :src="img" />
-						<a class="download" :href="img" :download="`${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
-					</div>
+				<div class="images" v-if="result.source">
+					<img v-if="result.source" :src="result.source" />
+					<span>&#x21e8;</span>
+					<img v-if="result.target" :src="result.target" />
 				</div>
 				<p v-if="result.error" class="error" v-html="result.error"></p>
 				<hr />
@@ -85,17 +84,26 @@
 			async paint () {
 				const item = {
 					prompt: this.description,
+					source: this.sourceURL,
+					target: null,
 					loading: true,
 				};
 				this.results.push(item);
 
-				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`);
+				const image = await (await fetch(this.sourceURL)).blob();
+
+				const form = new FormData();
+				form.append("image", image);
+
+				const response = await fetch(`/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}`, {
+					method: "POST",
+					body: form,
+				});
 				if (response.ok) {
 					const result = await response.json();
-					if (result.images)
-						result.images = await Promise.all(result.images.map(toBlobURL));
+					console.log("result:", result);
 
-					Object.assign(item, result);
+					item.target = result.image;
 				}
 				else
 					item.error = await response.text();
@@ -131,5 +139,17 @@
 	.source.drop-hover
 	{
 		outline: 4px lightgreen dashed;
+	}
+
+	main section .images > *
+	{
+		vertical-align: middle;
+		font-size: 64px;
+	}
+
+	main section .images > span
+	{
+		display: inline-block;
+		margin: .6em;
 	}
 </style>

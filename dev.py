@@ -62,7 +62,12 @@ def img2img():
 	image = PIL.Image.open(imageFile.stream)
 	print('image:', image.size)
 
-	return flask.Response(json.dumps('ok'), mimetype = 'application/json')
+	result = {
+		'prompt': prompt,
+		'image': '/favicon.ico',
+	}
+
+	return flask.Response(json.dumps(result), mimetype = 'application/json')
 
 
 def main(argv):
