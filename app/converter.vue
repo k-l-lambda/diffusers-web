@@ -9,9 +9,12 @@
 		<header>
 			<img class="source" :src="sourceURL" :class="{'drop-hover': drageHover}" />
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
-			<StoreInput sessionKey="description" type="text" v-model="description" min="1" v-show="false" />
-			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" min="1" v-show="false" />
-			<input type="number" v-model="n_steps" min="1" max="250" :size="1" />
+			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps"  v-show="false" />
+			<StoreInput sessionKey="strength" type="number" v-model="strength" v-show="false" />
+			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
+			<input type="range" v-model.number="strength" min="0" max="1" step="any" />
+			<em title="strength">{{strength.toFixed(2)}}</em>
 			<button @click="paint">&#x1f4ad;</button>
 		</header>
 		<main>
@@ -57,6 +60,7 @@
 				n_steps: 50,
 				sourceURL: null,
 				drageHover: false,
+				strength: 0.5,
 			};
 		},
 
@@ -95,7 +99,7 @@
 				const form = new FormData();
 				form.append("image", image);
 
-				const response = await fetch(`/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}`, {
+				const response = await fetch(`/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}&strength=${this.strength}`, {
 					method: "POST",
 					body: form,
 				});

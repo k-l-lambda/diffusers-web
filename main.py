@@ -10,6 +10,7 @@ import base64
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
+from pipeline_stable_diffusion_img2img import StableDiffusionImg2ImgPipeline
 
 
 
@@ -74,20 +75,30 @@ def paintByText():
 def img2img():
 	prompt = flask.request.args.get('prompt')
 	n_steps = int(flask.request.args.get('n_steps', 50))
+	strength = float(flask.request.args.get('strength', 0.5))
 
 	imageFile = flask.request.files.get('image')
 	if not imageFile:
 		flask.abort(400, 'image field is requested.')
 
 	image = PIL.Image.open(imageFile.stream)
-	print('image:', image.size)
 
-	return flask.Response(json.dumps('ok'), mimetype = 'application/json')
+	global pipe2
+	result = pipe2(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
+
+	result = {
+		'prompt': prompt,
+		'image': encodeImageToDataURL(result['images'][0]),
+		'latent': result['latents'][0],
+	}
+
+	return flask.Response(json.dumps(result), mimetype = 'application/json')
 
 
 def main(argv):
-	global pipe
+	global pipe, pipe2
 	pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
+	pipe2 = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
 	if DEVICE:
 		pipe.to(DEVICE)
 

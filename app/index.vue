@@ -2,21 +2,21 @@
 	<div class="home">
 		<header>
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
-			<StoreInput sessionKey="description" type="text" v-model="description" min="1" v-show="false" />
-			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" min="1" v-show="false" />
+			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
 			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
 			<StoreInput sessionKey="size_h" type="number" v-model="height" v-show="false" />
-			<input type="number" v-model="n_steps" min="1" max="250" :size="1" />
-			<select v-model="multi">
+			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
+			<select v-model.number="multi">
 				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
 			</select>
 			<span>
-				<select v-model="width">
+				<select v-model.number="width">
 					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 				&times;
-				<select v-model="height">
+				<select v-model.number="height">
 					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 			</span>
