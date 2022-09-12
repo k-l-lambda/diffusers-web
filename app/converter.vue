@@ -23,7 +23,10 @@
 				<div class="images" v-if="result.source">
 					<img v-if="result.source" :src="result.source" />
 					<span>&#x21e8;</span>
-					<img v-if="result.target" :src="result.target" />
+					<div class="picture">
+						<img v-if="result.target" :src="result.target" />
+						<a class="download" :href="result.target" :download="`conversion-${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
+					</div>
 				</div>
 				<p v-if="result.error" class="error" v-html="result.error"></p>
 				<hr />
@@ -107,8 +110,8 @@
 					const result = await response.json();
 					//console.log("result:", result);
 
-					item.source = result.source;
-					item.target = result.image;
+					item.source = await toBlobURL(result.source);
+					item.target = await toBlobURL(result.image);
 				}
 				else
 					item.error = await response.text();
