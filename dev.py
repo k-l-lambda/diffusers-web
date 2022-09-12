@@ -64,6 +64,7 @@ def img2img():
 
 	result = {
 		'prompt': prompt,
+		'source': '/favicon.ico',
 		'image': '/favicon.ico',
 	}
 

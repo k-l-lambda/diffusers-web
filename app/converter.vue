@@ -88,7 +88,7 @@
 			async paint () {
 				const item = {
 					prompt: this.description,
-					source: this.sourceURL,
+					source: null,
 					target: null,
 					loading: true,
 				};
@@ -105,8 +105,9 @@
 				});
 				if (response.ok) {
 					const result = await response.json();
-					console.log("result:", result);
+					//console.log("result:", result);
 
+					item.source = result.source;
 					item.target = result.image;
 				}
 				else
