@@ -10,8 +10,9 @@ from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
 from diffusers.models import AutoencoderKL, UNet2DConditionModel
 from diffusers.pipeline_utils import DiffusionPipeline
 from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMScheduler
-from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
+#from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
 #from .safety_checker import StableDiffusionSafetyChecker
+from pipeline_stable_diffusion import encodeFloat32
 
 
 def preprocess(image):
@@ -275,6 +276,8 @@ class StableDiffusionImg2ImgPipeline(DiffusionPipeline):
 		latents = 1 / 0.18215 * latents
 		image = self.vae.decode(latents.to(self.vae.dtype)).sample
 
+		latent_codes = [encodeFloat32(l) for l in latents]
+
 		image = (image / 2 + 0.5).clamp(0, 1)
 		image = image.cpu().permute(0, 2, 3, 1).numpy()
 
@@ -289,4 +292,4 @@ class StableDiffusionImg2ImgPipeline(DiffusionPipeline):
 		if not return_dict:
 			return (image, has_nsfw_concept)
 
-		return StableDiffusionPipelineOutput(images=image, nsfw_content_detected=has_nsfw_concept)
+		return dict(images=image, latents=latent_codes, nsfw_content_detected=has_nsfw_concept)

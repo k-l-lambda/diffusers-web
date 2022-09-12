@@ -35,6 +35,7 @@ def bundle(filename):
 
 pageRouters = {
 	'/':				'index.html',
+	'/converter':		'converter.html',
 }
 for path in pageRouters:
 	def getHandler(filename):
@@ -107,6 +108,7 @@ def main(argv):
 	pipe2 = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
 	if DEVICE:
 		pipe.to(DEVICE)
+		pipe2.to(DEVICE)
 
 	try:
 		app.run(port=HTTP_PORT, host=HTTP_HOST, threaded=False)
