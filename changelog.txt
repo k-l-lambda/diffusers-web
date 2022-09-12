@@ -1,6 +1,11 @@
 
 
 
+2022.9.12	K.L.	<k.l.lambda@gmail.com>
+
+	+	App entry of converter created.
+
+
 2022.9.11	K.L.	<k.l.lambda@gmail.com>
 
 	+	pipeline_stable_diffusion_img2img.py created.

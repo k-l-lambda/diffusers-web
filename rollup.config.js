@@ -9,6 +9,7 @@ import resolve from "@rollup/plugin-node-resolve";
 
 export default [
 	"index",
+	"converter",
 ].map(entry => ({
 	input: `./app/${entry}.js`,
 
@@ -19,7 +20,6 @@ export default [
 
 	plugins: [
 		replace({
-			//preventAssignment: true,
 			"process.env.NODE_ENV": JSON.stringify("development"),
 			"process.env.VUE_ENV": JSON.stringify("browser"),
 		}),

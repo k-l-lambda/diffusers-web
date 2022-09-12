@@ -1,26 +1,12 @@
 <template>
-	<div class="home">
+	<div class="converter">
 		<header>
+			<img class="source" :src="sourceURL" />
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
 			<StoreInput sessionKey="description" type="text" v-model="description" min="1" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" min="1" v-show="false" />
-			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
-			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
-			<StoreInput sessionKey="size_h" type="number" v-model="height" v-show="false" />
 			<input type="number" v-model="n_steps" min="1" max="250" :size="1" />
-			<select v-model="multi">
-				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
-			</select>
-			<span>
-				<select v-model="width">
-					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
-				</select>
-				&times;
-				<select v-model="height">
-					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
-				</select>
-			</span>
-			<button @click="paintByText">&#x1f4ad;</button>
+			<button @click="paint">&#x1f4ad;</button>
 		</header>
 		<main>
 			<section v-for="(result, i) of results" :key="i">
@@ -63,16 +49,14 @@
 			return {
 				description: null,
 				results: [],
-				multi: 1,
 				n_steps: 50,
-				width: 512,
-				height: 512,
+				sourceURL: null,
 			};
 		},
 
 
 		methods: {
-			async paintByText () {
+			async paint () {
 				const item = {
 					prompt: this.description,
 					loading: true,
@@ -98,7 +82,7 @@
 
 <style src="./common.css"></style>
 <style>
-	.home
+	.converter
 	{
 		display: flex;
 		flex-direction: column;
@@ -108,5 +92,13 @@
 	header button
 	{
 		flex: 0 0 4em;
+	}
+
+	header .source
+	{
+		min-width: 64px;
+		width: 64px;
+		max-height: 128px;
+		vertical-align: top;
 	}
 </style>
