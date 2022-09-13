@@ -1,6 +1,10 @@
 
 TODO:
-	merge pipeline classes
+
+
+2022.9.13	K.L.	<k.l.lambda@gmail.com>
+
+	+	pipeline_stable_diffusion.py: merged pipeline classes.
 
 
 2022.9.12	K.L.	<k.l.lambda@gmail.com>

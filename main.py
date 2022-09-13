@@ -11,7 +11,6 @@ import math
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
-from pipeline_stable_diffusion_img2img import StableDiffusionImg2ImgPipeline
 
 
 
@@ -53,7 +52,7 @@ def encodeImageToDataURL (image):
 
 
 @app.route('/paint-by-text', methods=['GET'])
-def paintByText():
+def paintByText ():
 	prompt = flask.request.args.get('prompt')
 	multi = int(flask.request.args.get('multi', 1))
 	n_steps = int(flask.request.args.get('n_steps', 50))
@@ -62,7 +61,7 @@ def paintByText():
 	#print('paint by text:', prompt, multi)
 
 	global pipe
-	result = pipe([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
+	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
 
 	result = {
 		'prompt': prompt,
@@ -74,7 +73,7 @@ def paintByText():
 
 
 @app.route('/img2img', methods=['POST'])
-def img2img():
+def img2img ():
 	prompt = flask.request.args.get('prompt')
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	strength = float(flask.request.args.get('strength', 0.5))
@@ -93,8 +92,8 @@ def img2img():
 		image = image.resize((w, h), resample=PIL.Image.BICUBIC)
 	#print('image:', image.size, scaling)
 
-	global pipe2
-	result = pipe2(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
+	global pipe
+	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
 
 	result = {
 		'prompt': prompt,
@@ -106,13 +105,11 @@ def img2img():
 	return flask.Response(json.dumps(result), mimetype = 'application/json')
 
 
-def main(argv):
-	global pipe, pipe2
+def main (argv):
+	global pipe
 	pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
-	pipe2 = StableDiffusionImg2ImgPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
 	if DEVICE:
 		pipe.to(DEVICE)
-		pipe2.to(DEVICE)
 
 	try:
 		app.run(port=HTTP_PORT, host=HTTP_HOST, threaded=False)
