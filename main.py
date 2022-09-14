@@ -22,6 +22,7 @@ DIST_DIR = './dist'
 HTTP_HOST = os.getenv('HTTP_HOST')
 HTTP_PORT = int(os.getenv('HTTP_PORT'))
 HF_TOKEN = os.getenv('HF_TOKEN')
+MODEL_NAME = os.getenv('MODEL_NAME')
 DEVICE = os.getenv('DEVICE')
 
 
@@ -107,7 +108,7 @@ def img2img ():
 
 def main (argv):
 	global pipe
-	pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", use_auth_token=HF_TOKEN)
+	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
 	if DEVICE:
 		pipe.to(DEVICE)
 
