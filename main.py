@@ -11,6 +11,7 @@ import math
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
+from sentenceGen import SentenceGenerator
 
 
 
@@ -106,9 +107,17 @@ def img2img ():
 	return flask.Response(json.dumps(result), mimetype = 'application/json')
 
 
+@app.route('/random-sentence', methods=['GET'])
+def randomSentence ():
+	global senGen
+
+	return flask.Response(senGen.generate(temperature=4), mimetype = 'text/plain')
+
+
 def main (argv):
-	global pipe
+	global pipe, senGen
 	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
+	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt')
 	if DEVICE:
 		pipe.to(DEVICE)
 
