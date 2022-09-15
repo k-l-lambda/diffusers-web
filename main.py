@@ -28,6 +28,8 @@ MODEL_NAME = os.getenv('MODEL_NAME')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
 
+TEMPERATURE = 4.
+
 
 @app.route('/bundles/<path:filename>')
 def bundle(filename):
@@ -63,6 +65,9 @@ def paintByText ():
 	width = int(flask.request.args.get('w', 512))
 	height = int(flask.request.args.get('h', 512))
 	#print('paint by text:', prompt, multi)
+
+	if prompt == '***':
+		prompt = senGen.generate(temperature=TEMPERATURE)
 
 	global pipe
 	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
@@ -113,7 +118,7 @@ def img2img ():
 def randomSentence ():
 	global senGen
 
-	return flask.Response(senGen.generate(temperature=4), mimetype = 'text/plain')
+	return flask.Response(senGen.generate(temperature=TEMPERATURE), mimetype = 'text/plain')
 
 
 def main (argv):
