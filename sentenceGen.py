@@ -2,6 +2,7 @@
 import random
 import math
 import numpy as np
+import re
 from transformers import BertTokenizer, pipeline
 
 
@@ -48,7 +49,7 @@ class SentenceGenerator:
 			index = list(samples).index(1)
 
 			nw = candidates[index]['token_str']
-			if not nw in sentence and not nw.startswith('#'):
+			if not nw in sentence and re.match(r'^\w+', nw) is not None:
 				break
 
 		new_sentence = [word if i != mid else candidates[index]['token_str'] for i, word in enumerate(sentence)]

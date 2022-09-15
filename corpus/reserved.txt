@@ -126,6 +126,8 @@ howl
 composition
 diffused
 artstyle
+jesper
+ejsing
 ,
 '
 "
