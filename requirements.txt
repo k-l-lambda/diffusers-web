@@ -4,3 +4,4 @@ numpy
 Pillow
 diffusers==0.3.0
 torch
+transformers
