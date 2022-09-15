@@ -80,7 +80,7 @@ def paintByText ():
 		res = flask.Response(fp.getvalue(), mimetype = 'image/png')
 
 		filename = re.sub(r'[^\w\s]', '', prompt)[:240]
-		res.headers['Content-Disposition'] = f'attachment; filename="{filename}.png"'
+		res.headers['Content-Disposition'] = f'inline; filename="{filename}.png"'
 
 		return res
 
