@@ -27,16 +27,30 @@ class SentenceGenerator:
 		return self.tokenizer.basic_tokenizer.tokenize(sentence, never_split=self.tokenizer.all_special_tokens)
 
 
+	def joinSentence (self, words):
+		sentence = ' '.join(words)
+		sentence = sentence.replace(' ,', ',')
+		sentence = sentence.replace(' .', '.')
+		sentence = sentence.replace(" ' s", "'s")
+		sentence = re.sub(r'"\s([^"]*)\s"', r'"\1"', sentence)
+		sentence = re.sub(r"'\s([^']*)\s'", r'"\1"', sentence)
+
+		return sentence
+
+
 	def transform_sentence (self, sentence, temperature=1):
 		idx = [i for i, word in enumerate(sentence) if not word in self.reserved_words]
 
 		if len(idx) <= 0:
 			return sentence
 
-		mid = idx[random.randrange(0, len(idx))]
+		mid = idx[random.randrange(len(idx))]
 
 		masked_sentence = ' '.join([word if i != mid else '[MASK]' for i, word in enumerate(sentence)])
 		candidates = self.unmasker(masked_sentence)
+		candidates = [c for c in candidates if c['token_str'] != 'the' and not c['token_str'] in sentence and re.match(r'^\w+', c['token_str']) is not None]
+		if len(candidates) == 0:
+			return sentence
 
 		scores = [item['score'] for item in candidates]
 		logits = [math.log(s) for s in scores]
@@ -44,14 +58,27 @@ class SentenceGenerator:
 		score_sum = sum(scores)
 		scores = [s / score_sum for s in scores]
 
-		for i in range(10):
-			samples = np.random.multinomial(1, scores)
-			index = list(samples).index(1)
+		samples = np.random.multinomial(1, scores)
+		index = list(samples).index(1)
 
-			nw = candidates[index]['token_str']
-			if not nw in sentence and re.match(r'^\w+', nw) is not None:
-				break
+		nw = candidates[index]['token_str']
 
 		new_sentence = [word if i != mid else candidates[index]['token_str'] for i, word in enumerate(sentence)]
 
 		return new_sentence
+
+
+	def generate (self, temperature=1, change_rate=0.5):
+		template = self.templates[random.randrange(len(self.templates))]
+		n_vary_word = len([word for word in template if not (word in self.reserved_words)])
+
+		n_changes = max(1, round(math.exp(np.random.randn() * 0.4) * n_vary_word * change_rate))
+		print('n_changes:', n_changes)
+
+		words = template
+		for i in range(n_changes):
+			words = self.transform_sentence(words, temperature)
+
+		print('template:', self.joinSentence(template))
+
+		return self.joinSentence(words)
