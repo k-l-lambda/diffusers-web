@@ -2,6 +2,11 @@
 TODO:
 
 
+2022.9.15	K.L.	<k.l.lambda@gmail.com>
+
+	+	sentenceGen.py created.
+
+
 2022.9.14	K.L.	<k.l.lambda@gmail.com>
 
 	+	main.py: added env variable of MODEL_NAME.
