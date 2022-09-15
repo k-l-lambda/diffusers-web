@@ -42,13 +42,19 @@ for path in pageRouters:
 @app.route('/paint-by-text', methods=['GET'])
 def paintByText():
 	prompt = flask.request.args.get('prompt')
+	img_only = flask.request.args.get('img_only')
 
 	result = {
 		'prompt': prompt,
 		'images': ['/favicon.ico'],
 	}
 
-	return flask.Response(json.dumps(result), mimetype = 'application/json')
+	if img_only is not None:
+		file = open('./static/favicon.ico', 'rb')
+
+		return flask.Response(file, mimetype = 'image/png')
+
+	return flask.Response(json.dumps(result), mimetype='application/json')
 
 
 @app.route('/img2img', methods=['POST'])

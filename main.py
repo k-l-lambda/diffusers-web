@@ -64,6 +64,7 @@ def paintByText ():
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	width = int(flask.request.args.get('w', 512))
 	height = int(flask.request.args.get('h', 512))
+	img_only = flask.request.args.get('img_only')
 	#print('paint by text:', prompt, multi)
 
 	if prompt == '***':
@@ -71,6 +72,12 @@ def paintByText ():
 
 	global pipe
 	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
+
+	if img_only is not None:
+		fp = io.BytesIO()
+		result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
+
+		return flask.Response(fp.getvalue(), mimetype = 'image/png')
 
 	result = {
 		'prompt': prompt,
