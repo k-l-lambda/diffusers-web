@@ -16,7 +16,7 @@ class SentenceGenerator:
 			text = file.read()
 			self.reserved_words = text.split('\n')
 
-		with open(templates_path, 'r') as file:
+		with open(templates_path, 'r', encoding='utf-8') as file:
 			text = file.read()
 			sentences = text.split('\n')
 
