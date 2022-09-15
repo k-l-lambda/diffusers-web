@@ -120,7 +120,13 @@ katsuhiro
 hokusai
 sakimichan
 vincent
+nausicaa
+di
+howl
+composition
 ,
 '
 "
++
+-
 s
