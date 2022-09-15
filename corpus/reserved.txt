@@ -124,6 +124,8 @@ nausicaa
 di
 howl
 composition
+diffused
+artstyle
 ,
 '
 "

@@ -43,8 +43,13 @@ class SentenceGenerator:
 		score_sum = sum(scores)
 		scores = [s / score_sum for s in scores]
 
-		samples = np.random.multinomial(1, scores)
-		index = list(samples).index(1)
+		for i in range(10):
+			samples = np.random.multinomial(1, scores)
+			index = list(samples).index(1)
+
+			nw = candidates[index]['token_str']
+			if not nw in sentence and not nw.startswith('#'):
+				break
 
 		new_sentence = [word if i != mid else candidates[index]['token_str'] for i, word in enumerate(sentence)]
 
