@@ -8,7 +8,6 @@ import fetch from "node-fetch";
 const fetchOne = (fetcher, dir) => {
 	const promise = fetcher();
 	promise.then(async response => {
-		try {
 			await new Promise(resolve => setTimeout(resolve, 0));
 
 			const [_, filename] = response.headers.get('content-disposition').match(/filename="(.+)"/);
@@ -25,11 +24,7 @@ const fetchOne = (fetcher, dir) => {
 			const buffer = await response.buffer();
 	
 			fs.writeFileSync(fullname, buffer);
-		}
-		catch (err) {
-			console.warn('fetch error:', err);
-		}
-	});
+	}).catch(err => console.warn('res err:', err));
 
 	return promise;
 };
@@ -58,4 +53,4 @@ const main = async argv => {
 };
 
 
-main(process.argv);
+main(process.argv).catch(err => console.log('fatal:', err));
