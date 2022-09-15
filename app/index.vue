@@ -2,7 +2,7 @@
 	<div class="home">
 		<header>
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
-			<button @click="rollDescription">&#x1f3b2;</button>
+			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />

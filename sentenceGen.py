@@ -73,12 +73,10 @@ class SentenceGenerator:
 		n_vary_word = len([word for word in template if not (word in self.reserved_words)])
 
 		n_changes = max(1, round(math.exp(np.random.randn() * 0.4) * n_vary_word * change_rate))
-		print('n_changes:', n_changes)
+		#print('n_changes:', n_changes)
 
 		words = template
 		for i in range(n_changes):
 			words = self.transform_sentence(words, temperature)
-
-		print('template:', self.joinSentence(template))
 
 		return self.joinSentence(words)
