@@ -5,6 +5,7 @@ import re
 import flask
 import json
 import PIL.Image
+import random
 
 import env
 
@@ -68,7 +69,12 @@ def img2img():
 		'image': '/favicon.ico',
 	}
 
-	return flask.Response(json.dumps(result), mimetype = 'application/json')
+	return flask.Response(json.dumps(result), mimetype='application/json')
+
+
+@app.route('/random-sentence', methods=['GET'])
+def randomSentence ():
+	return flask.Response(''.join([chr(random.randrange(48, 126)) for i in range(16)]), mimetype='text/plain')
 
 
 def main(argv):

@@ -2,6 +2,7 @@
 	<div class="home">
 		<header>
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
+			<button @click="rollDescription">&#x1f3b2;</button>
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
@@ -20,7 +21,7 @@
 					<option v-for="i of 14" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 			</span>
-			<button @click="paintByText">&#x1f4ad;</button>
+			<button class="submit" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main>
 			<section v-for="(result, i) of results" :key="i">
@@ -92,6 +93,12 @@
 
 				item.loading = false;
 			},
+
+
+			async rollDescription () {
+				const response = await fetch(`/random-sentence`);
+				this.description = await response.text();
+			},
 		},
 	};
 </script>
@@ -103,10 +110,5 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-	}
-
-	header button
-	{
-		flex: 0 0 4em;
 	}
 </style>

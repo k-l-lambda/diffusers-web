@@ -15,7 +15,7 @@
 			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
 			<input type="range" v-model.number="strength" min="0" max="1" step="any" />
 			<em title="strength">{{strength.toFixed(2)}}</em>
-			<button @click="paint">&#x1f4ad;</button>
+			<button class="submit" @click="paint">&#x1f4ad;</button>
 		</header>
 		<main>
 			<section v-for="(result, i) of results" :key="i">
