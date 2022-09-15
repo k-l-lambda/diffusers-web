@@ -8,6 +8,7 @@
 		"start": "python ./main.py",
 		"start3": "python3 ./main.py"
 	},
+	"type": "module",
 	"devDependencies": {
 		"@rollup/plugin-alias": "3.0.0",
 		"@rollup/plugin-commonjs": "11.0.1",
@@ -17,6 +18,7 @@
 		"eslint": "^6.8.0",
 		"eslint-plugin-html": "^6.0.0",
 		"js-md5": "^0.7.3",
+		"node-fetch": "^3.2.10",
 		"rollup": "1.29.0",
 		"rollup-plugin-vue": "4.7.2",
 		"stream": "^0.0.2",
