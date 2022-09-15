@@ -8,6 +8,7 @@ import io
 import PIL.Image
 import base64
 import math
+import torch
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
@@ -117,7 +118,7 @@ def randomSentence ():
 def main (argv):
 	global pipe, senGen
 	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
-	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt')
+	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=torch.device(f'{DEVICE}:0'))
 	if DEVICE:
 		pipe.to(DEVICE)
 
