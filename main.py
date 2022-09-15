@@ -77,7 +77,12 @@ def paintByText ():
 		fp = io.BytesIO()
 		result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
 
-		return flask.Response(fp.getvalue(), mimetype = 'image/png')
+		res = flask.Response(fp.getvalue(), mimetype = 'image/png')
+
+		filename = re.sub(r'[^\w\s]', '', prompt)[:240]
+		res.headers['Content-Disposition'] = f'attachment; filename="{filename}.png"'
+
+		return res
 
 	result = {
 		'prompt': prompt,
