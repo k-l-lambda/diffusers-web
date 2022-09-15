@@ -8,17 +8,19 @@ import fetch from "node-fetch";
 const fetchOne = (fetcher, dir) => {
 	const promise = fetcher();
 	promise.then(async response => {
+		await new Promise(resolve => setTimeout(resolve, 0));
+
 		const [_, filename] = response.headers.get('content-disposition').match(/filename="(.+)"/);
 		//console.log("filename:", filename);
-	
+
 		// find a unique name
 		let fullname = path.resolve(dir, filename);
 		let i = 0;
-	
+
 		const [stem, ext] = filename.split(".");
 		while (fs.existsSync(fullname))
 			fullname = path.resolve(dir, `${stem} [${i++}].${ext}`);
-	
+
 		const buffer = await response.buffer();
 
 		fs.writeFileSync(fullname, buffer);
