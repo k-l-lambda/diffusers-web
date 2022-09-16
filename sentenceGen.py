@@ -8,7 +8,7 @@ from transformers import BertTokenizer, pipeline
 
 
 class SentenceGenerator:
-	def __init__(self, templates_path, reserved_path, device=None):
+	def __init__(self, templates_path, reserved_path, device=-1):
 		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 		self.unmasker = pipeline('fill-mask', model='bert-base-uncased', device=device)
 
