@@ -58,12 +58,10 @@ class SentenceGenerator:
 		score_sum = sum(scores)
 		scores = [s / score_sum for s in scores]
 
-		samples = np.random.multinomial(1, scores)
-		index = list(samples).index(1)
+		index = np.random.choice(len(scores), p=scores)
 
 		nw = candidates[index]['token_str']
-
-		new_sentence = [word if i != mid else candidates[index]['token_str'] for i, word in enumerate(sentence)]
+		new_sentence = [word if i != mid else nw for i, word in enumerate(sentence)]
 
 		return new_sentence
 
