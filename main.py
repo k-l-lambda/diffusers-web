@@ -141,15 +141,19 @@ def inpaint():
 	image = PIL.Image.open(imageFile.stream)
 
 	data = np.array(image)
+	source_arr = data[:, :, :3].astype(np.float32) / 255.
+	mask_arr = data[:, :, 3:].astype(np.float32) / 255.
 
-	source = PIL.Image.fromarray(data[:, :, :3])
+	# fill blank
+	#source_arr = source_arr * mask_arr + np.random.randn(*source_arr.shape) * (1 - mask_arr)
+	source_arr = source_arr * mask_arr + np.ones(source_arr.shape) * (1 - mask_arr)
+
+	source = PIL.Image.fromarray((source_arr * 255).astype(np.uint8))
 	mask = PIL.Image.fromarray(data[:, :, 3])
 
 	global pipe
 	result = pipe.inpaint(prompt, init_image=source, mask_image=mask, num_inference_steps=n_steps, strength=strength)
 
-	source_arr = data[:, :, :3].astype(np.float32) / 255.
-	mask_arr = data[:, :, 3:].astype(np.float32) / 255.
 	result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
 	result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
 	result_arr = (result_arr * 255).astype(np.uint8)
