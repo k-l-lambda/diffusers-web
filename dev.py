@@ -1,11 +1,13 @@
 
 import sys
 import os
+import io
 import re
 import flask
 import json
 import PIL.Image
 import random
+import numpy as np
 
 import env
 
@@ -77,6 +79,32 @@ def img2img():
 	}
 
 	return flask.Response(json.dumps(result), mimetype='application/json')
+
+
+@app.route('/inpaint', methods=['POST'])
+def inpaint():
+	prompt = flask.request.args.get('prompt')
+	n_steps = int(flask.request.args.get('n_steps', 50))
+
+	imageFile = flask.request.files.get('image')
+	if not imageFile:
+		flask.abort(400, 'image field is requested.')
+
+	image = PIL.Image.open(imageFile.stream)
+	#print('image:', image.size)
+
+	data = np.array(image)
+	print('data:', data.shape)
+
+	source = PIL.Image.fromarray(data[:, :, :3])
+	mask = PIL.Image.fromarray(data[:, :, 3])
+
+	result = PIL.Image.fromarray(data[::-1, ::-1, :3])
+
+	fp = io.BytesIO()
+	result.save(fp, PIL.Image.registered_extensions()['.png'])
+
+	return flask.Response(fp.getvalue(), mimetype = 'image/png')
 
 
 @app.route('/random-sentence', methods=['GET'])

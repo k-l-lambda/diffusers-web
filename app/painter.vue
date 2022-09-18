@@ -26,6 +26,7 @@
 			<button @click="clear">&#x239A;</button>
 			<button @click="copy">&#x2398;</button>
 			<button @click="download">&#x2913;</button>
+			<button @click="inpaint">&#x1f58c;</button>
 		</header>
 	</div>
 </template>
@@ -69,6 +70,9 @@
 					top: 200,
 					bottom: 712,
 				},
+				description: "",
+				n_steps: 50,
+				strength: 0.5,
 			};
 		},
 
@@ -86,7 +90,7 @@
 				const image = [...event.clipboardData.items].filter(item => item.type.match(/image/))[0];
 				if (image) {
 					const file = image.getAsFile();
-					this.pasteImage(URL.createObjectURL(file));
+					this.pasteImage(URL.createObjectURL(file), this.pointerPosition.x, this.pointerPosition.y);
 				}
 			},
 
@@ -97,11 +101,11 @@
 				const file = event.dataTransfer.files[0];
 				if (file)
 					if (/^image/.test(file.type))
-						this.pasteImage(URL.createObjectURL(file));
+						this.pasteImage(URL.createObjectURL(file), this.pointerPosition.x, this.pointerPosition.y);
 			},
 
 
-			async pasteImage (url) {
+			async pasteImage (url, x, y) {
 				const img = new Image();
 				img.src = url;
 				await new Promise((resolve, reject) => {
@@ -111,7 +115,7 @@
 
 				//console.log('paste:', img, this.pointerPosition);
 
-				this.ctx.drawImage(img, this.pointerPosition.x, this.pointerPosition.y);
+				this.ctx.drawImage(img, x, y);
 			},
 
 
@@ -167,6 +171,35 @@
 						break;
 					}
 				}
+			},
+
+
+			async getImageBlock (box) {
+				const data = this.ctx.getImageData(box.left, box.top, box.right - box.left, box.bottom - box.top);
+				const canvas = document.createElement("canvas");
+				canvas.width = data.width;
+				canvas.height = data.height;
+				const ctx = canvas.getContext("2d");
+				ctx.putImageData(data, 0, 0);
+
+				return new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+			},
+
+
+			async inpaint () {
+				const image = await this.getImageBlock(this.diffuserBox);
+
+				const form = new FormData();
+				form.append("image", image);
+
+				const response = await fetch(`/inpaint?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}&strength=${this.strength}`, {
+					method: "POST",
+					body: form,
+				});
+				const result = await response.blob();
+				//console.log("result:", result);
+
+				this.pasteImage(URL.createObjectURL(result), this.diffuserBox.left, this.diffuserBox.top);
 			},
 		},
 
