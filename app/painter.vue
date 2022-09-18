@@ -12,7 +12,14 @@
 					height: `${canvasSize.height}px`,
 				}"
 				@mousemove="pointerPosition.x = $event.offsetX; pointerPosition.y = $event.offsetY"
-			></div>
+			>
+				<ResizeBox class="diffuser-box"
+					:left.sync="diffuserBox.left"
+					:right.sync="diffuserBox.right"
+					:top.sync="diffuserBox.top"
+					:bottom.sync="diffuserBox.bottom"
+				/>
+			</div>
 		</main>
 		<header>
 			<button @click="clear">&#x239A;</button>
@@ -24,6 +31,7 @@
 
 <script>
 	import StoreInput from "./storeinput.vue";
+	import ResizeBox from "./resizeBox.vue";
 
 	import {downloadURL} from "./utils";
 
@@ -35,6 +43,7 @@
 
 		components: {
 			StoreInput,
+			ResizeBox,
 		},
 
 
@@ -47,6 +56,12 @@
 				pointerPosition: {
 					x: 0,
 					y: 0,
+				},
+				diffuserBox: {
+					left: 200,
+					right: 712,
+					top: 200,
+					bottom: 712,
 				},
 			};
 		},
@@ -166,5 +181,10 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
+	}
+
+	.diffuser-box
+	{
+		border: dashed 2px #111;
 	}
 </style>
