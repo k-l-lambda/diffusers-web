@@ -18,6 +18,7 @@
 					:right.sync="diffuserBox.right"
 					:top.sync="diffuserBox.top"
 					:bottom.sync="diffuserBox.bottom"
+					@released="onBoxResized"
 				/>
 			</div>
 		</main>
@@ -34,6 +35,11 @@
 	import ResizeBox from "./resizeBox.vue";
 
 	import {downloadURL} from "./utils";
+
+
+
+	const ROUND_UNIT = 32;
+	const PIXEL_MAX = 640 * 640;
 
 
 
@@ -125,6 +131,47 @@
 				const blob = await new Promise(resolve => this.$refs.canvas.toBlob(resolve, "image/png"));
 				downloadURL(URL.createObjectURL(blob), `[painter]${Date.now().toString()}.png`);
 			},
+
+
+			onBoxResized (tx, ty) {
+				const width = this.diffuserBox.right - this.diffuserBox.left;
+				const height = this.diffuserBox.bottom - this.diffuserBox.top;
+				let rw = Math.round(width / ROUND_UNIT) * ROUND_UNIT;
+				let rh = Math.round(height / ROUND_UNIT) * ROUND_UNIT;
+
+				if (rw * rh > PIXEL_MAX) {
+					if (ty)
+						rh = PIXEL_MAX / rw;
+					else
+						rw = PIXEL_MAX / rh;
+				}
+
+				if (rw !== width) {
+					switch (tx) {
+					case "l":
+						this.diffuserBox.left = this.diffuserBox.right - rw;
+						break;
+					case "r":
+						this.diffuserBox.right = this.diffuserBox.left + rw;
+						break;
+					}
+				}
+
+				if (rh !== height) {
+					switch (ty) {
+					case "t":
+						this.diffuserBox.top = this.diffuserBox.bottom - rh;
+						break;
+					case "b":
+						this.diffuserBox.bottom = this.diffuserBox.top + rh;
+						break;
+					}
+				}
+			},
+		},
+
+
+		watch: {
 		},
 	};
 </script>

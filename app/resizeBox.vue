@@ -7,6 +7,7 @@
 			height: `${bottom - top}px`,
 		}"
 	>
+		<span class="label" v-if="resizing">{{right - left}} &times; {{bottom - top}}</span>
 		<div class="inner"
 			@mousemove="onMove"
 			@mouseup="onUp"
@@ -101,6 +102,8 @@
 
 
 			onUp () {
+				this.$emit("released", this.tx, this.ty);
+
 				this.resizing = false;
 				this.tx = null;
 				this.ty = null;
