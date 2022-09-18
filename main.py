@@ -143,16 +143,19 @@ def inpaint():
 	data = np.array(image)
 
 	source = PIL.Image.fromarray(data[:, :, :3])
-	#mask = PIL.Image.fromarray(data[:, :, 3])
-	mask = torch.ones((1, 4, 64, 64))
-	mask[:, :, 20:58, 20:38] = 0
+	mask = PIL.Image.fromarray(data[:, :, 3])
 
 	global pipe
 	result = pipe.inpaint(prompt, init_image=source, mask_image=mask, num_inference_steps=n_steps, strength=strength)
 
+	source_arr = data[:, :, :3].astype(np.float32) / 255.
+	mask_arr = data[:, :, 3:].astype(np.float32) / 255.
+	result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
+	result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
+	result_arr = (result_arr * 255).astype(np.uint8)
+
 	fp = io.BytesIO()
-	result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
-	#mask.save(fp, PIL.Image.registered_extensions()['.png'])
+	PIL.Image.fromarray(result_arr).save(fp, PIL.Image.registered_extensions()['.png'])
 
 	return flask.Response(fp.getvalue(), mimetype = 'image/png')
 
