@@ -4,6 +4,8 @@ TODO:
 
 2022.9.18	K.L.	<k.l.lambda@gmail.com>
 
+	+	App entry of painter added.
+
 	+	pipeline_stable_diffusion.py: inpaint added.
 
 

@@ -10,6 +10,7 @@ import resolve from "@rollup/plugin-node-resolve";
 export default [
 	"index",
 	"converter",
+	"painter",
 ].map(entry => ({
 	input: `./app/${entry}.js`,
 

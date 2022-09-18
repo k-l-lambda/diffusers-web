@@ -31,6 +31,7 @@ def bundle(filename):
 pageRouters = {
 	'/':				'index.html',
 	'/converter':		'converter.html',
+	'/painter':			'painter.html',
 }
 for path in pageRouters:
 	def getHandler(filename):
