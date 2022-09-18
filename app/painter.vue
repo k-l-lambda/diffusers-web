@@ -23,10 +23,21 @@
 			</div>
 		</main>
 		<header>
-			<button @click="clear">&#x239A;</button>
-			<button @click="copy">&#x2398;</button>
-			<button @click="download">&#x2913;</button>
-			<button @click="inpaint">&#x1f58c;</button>
+			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps"  v-show="false" />
+			<StoreInput sessionKey="strength" type="number" v-model="strength" v-show="false" />
+			<section>
+				<button @click="clear">&#x239A;</button>
+				<button @click="copy">&#x2398;</button>
+				<button @click="download">&#x2913;</button>
+			</section>
+			<section>
+				<input class="description" v-model="description" type="text" placeholder="prompt text" />
+				<input type="number" v-model.number="n_steps" min="1" max="250" style="width: 2em" />
+				<input type="range" v-model.number="strength" min="0" max="1" step="any" style="width: 3em" />
+				<em title="strength">{{strength.toFixed(2)}}</em>
+				<button @click="inpaint">&#x1f58c;</button>
+			</section>
 		</header>
 	</div>
 </template>
@@ -238,6 +249,11 @@
 	.painter header *
 	{
 		font-size: inherit;
+	}
+
+	.painter header > * > *
+	{
+		height: unset;
 	}
 
 	.painter main
