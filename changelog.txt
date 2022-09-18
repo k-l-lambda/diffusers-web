@@ -2,6 +2,11 @@
 TODO:
 
 
+2022.9.18	K.L.	<k.l.lambda@gmail.com>
+
+	+	pipeline_stable_diffusion.py: inpaint added.
+
+
 2022.9.15	K.L.	<k.l.lambda@gmail.com>
 
 	+	index.vue: roll description button added.
