@@ -9,6 +9,7 @@ import PIL.Image
 import base64
 import math
 import torch
+import numpy as np
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
@@ -42,6 +43,7 @@ def bundle(filename):
 pageRouters = {
 	'/':				'index.html',
 	'/converter':		'converter.html',
+	'/painter':			'painter.html',
 }
 for path in pageRouters:
 	def getHandler(filename):
@@ -124,6 +126,35 @@ def img2img ():
 	}
 
 	return flask.Response(json.dumps(result), mimetype = 'application/json')
+
+
+@app.route('/inpaint', methods=['POST'])
+def inpaint():
+	prompt = flask.request.args.get('prompt')
+	n_steps = int(flask.request.args.get('n_steps', 50))
+	strength = float(flask.request.args.get('strength', 0.5))
+
+	imageFile = flask.request.files.get('image')
+	if not imageFile:
+		flask.abort(400, 'image field is requested.')
+
+	image = PIL.Image.open(imageFile.stream)
+
+	data = np.array(image)
+
+	source = PIL.Image.fromarray(data[:, :, :3])
+	#mask = PIL.Image.fromarray(data[:, :, 3])
+	mask = torch.ones((1, 4, 64, 64))
+	mask[:, :, 20:58, 20:38] = 0
+
+	global pipe
+	result = pipe.inpaint(prompt, init_image=source, mask_image=mask, num_inference_steps=n_steps, strength=strength)
+
+	fp = io.BytesIO()
+	result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
+	#mask.save(fp, PIL.Image.registered_extensions()['.png'])
+
+	return flask.Response(fp.getvalue(), mimetype = 'image/png')
 
 
 @app.route('/random-sentence', methods=['GET'])
