@@ -16,12 +16,16 @@
 		</main>
 		<header>
 			<button @click="clear">&#x239A;</button>
+			<button @click="copy">&#x2398;</button>
+			<button @click="download">&#x2913;</button>
 		</header>
 	</div>
 </template>
 
 <script>
 	import StoreInput from "./storeinput.vue";
+
+	import {downloadURL} from "./utils";
 
 
 
@@ -92,6 +96,19 @@
 
 			clear () {
 				this.ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
+			},
+
+
+			async copy () {
+				const blob = await new Promise(resolve => this.$refs.canvas.toBlob(resolve, "image/png"));
+				const result = await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+				console.log("copy:", result);
+			},
+
+
+			async download () {
+				const blob = await new Promise(resolve => this.$refs.canvas.toBlob(resolve, "image/png"));
+				downloadURL(URL.createObjectURL(blob), `[painter]${Date.now().toString()}.png`);
 			},
 		},
 	};
