@@ -19,6 +19,9 @@ from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMSchedu
 
 
 
+LATENTS_SCALING = 0.18215
+
+
 def preprocess (image):
 	w, h = image.size
 	w, h = map(lambda x: x - x % 32, (w, h))  # resize to integer multiple of 32
@@ -294,7 +297,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 				latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs).prev_sample
 
 		# scale and decode the image latents with vae
-		latents = 1 / 0.18215 * latents
+		latents = 1 / LATENTS_SCALING * latents
 		image = self.vae.decode(latents).sample
 		#print('latents:', latents.shape)
 
@@ -410,7 +413,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		# encode the init image into latents and scale the latents
 		init_latent_dist = self.vae.encode(init_image.to(self.device)).latent_dist
 		init_latents = init_latent_dist.sample(generator=generator)
-		init_latents = 0.18215 * init_latents
+		init_latents = LATENTS_SCALING * init_latents
 
 		# expand init_latents for batch_size
 		init_latents = torch.cat([init_latents] * batch_size)
@@ -498,7 +501,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 				latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs).prev_sample
 
 		# scale and decode the image latents with vae
-		latents = 1 / 0.18215 * latents
+		latents = 1 / LATENTS_SCALING * latents
 		image = self.vae.decode(latents.to(self.vae.dtype)).sample
 
 		latent_codes = [encodeFloat32(l) for l in latents]
@@ -600,7 +603,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		init_latent_dist = self.vae.encode(init_image).latent_dist
 		init_latents = init_latent_dist.sample(generator=generator)
 
-		init_latents = 0.18215 * init_latents
+		init_latents = LATENTS_SCALING * init_latents
 
 		# Expand init_latents for batch_size
 		init_latents = torch.cat([init_latents] * batch_size)
@@ -685,7 +688,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 			latents = (init_latents_proper * mask) + (latents * (1 - mask))
 
 		# scale and decode the image latents with vae
-		latents = 1 / 0.18215 * latents
+		latents = 1 / LATENTS_SCALING * latents
 		image = self.vae.decode(latents).sample
 
 		image = (image / 2 + 0.5).clamp(0, 1)
