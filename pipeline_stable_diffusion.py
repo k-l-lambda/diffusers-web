@@ -38,7 +38,7 @@ def preprocess_mask(mask):
 	mask = mask.resize((w // 8, h // 8), resample=PIL.Image.NEAREST)
 	mask = np.array(mask).astype(np.float32) / 255.0
 	mask = np.tile(mask, (4, 1, 1))
-	mask = mask[None].transpose(0, 1, 2, 3)  # what does this step do?
+	mask = np.expand_dims(mask, axis=0)
 	#mask = 1 - mask  # repaint white, keep black
 	mask = torch.from_numpy(mask)
 	return mask

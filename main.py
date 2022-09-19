@@ -141,14 +141,15 @@ def inpaint():
 	image = PIL.Image.open(imageFile.stream)
 
 	data = np.array(image)
-	source_arr = data[:, :, :3].astype(np.float32) / 255.
-	mask_arr = data[:, :, 3:].astype(np.float32) / 255.
+	#source_arr = data[:, :, :3].astype(np.float32) / 255.
+	#mask_arr = data[:, :, 3:].astype(np.float32) / 255.
 
 	# fill blank
 	#source_arr = source_arr * mask_arr + np.random.randn(*source_arr.shape) * (1 - mask_arr)
-	source_arr = source_arr * mask_arr + np.ones(source_arr.shape) * (1 - mask_arr)
+	#source_arr = source_arr * mask_arr + np.ones(source_arr.shape) * (1 - mask_arr)
 
-	source = PIL.Image.fromarray((source_arr * 255).astype(np.uint8))
+	#source = PIL.Image.fromarray((source_arr * 255).astype(np.uint8))
+	source = PIL.Image.fromarray(data[:, :, :3])
 	mask = PIL.Image.fromarray(data[:, :, 3])
 
 	global pipe
@@ -157,10 +158,10 @@ def inpaint():
 	#result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
 	#result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
 	#result_arr = (result_arr * 255).astype(np.uint8)
-	result_arr = result['images'][0]
 
 	fp = io.BytesIO()
-	PIL.Image.fromarray(result_arr).save(fp, PIL.Image.registered_extensions()['.png'])
+	#PIL.Image.fromarray(result_arr).save(fp, PIL.Image.registered_extensions()['.png'])
+	result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
 
 	return flask.Response(fp.getvalue(), mimetype = 'image/png')
 
