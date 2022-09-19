@@ -154,9 +154,10 @@ def inpaint():
 	global pipe
 	result = pipe.inpaint(prompt, init_image=source, mask_image=mask, num_inference_steps=n_steps, strength=strength)
 
-	result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
-	result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
-	result_arr = (result_arr * 255).astype(np.uint8)
+	#result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
+	#result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
+	#result_arr = (result_arr * 255).astype(np.uint8)
+	result_arr = result['images'][0]
 
 	fp = io.BytesIO()
 	PIL.Image.fromarray(result_arr).save(fp, PIL.Image.registered_extensions()['.png'])

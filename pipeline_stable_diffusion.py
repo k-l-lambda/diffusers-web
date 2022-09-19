@@ -624,7 +624,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		timesteps = torch.tensor([timesteps] * batch_size, dtype=torch.long, device=self.device)
 
 		# add noise to latents using the timesteps
-		noise = torch.randn(init_latents.shape, generator=generator, device=self.device)
+		noise = torch.randn(init_latents.shape, generator=generator, device=self.device) * (1 - mask)
 		init_latents = self.scheduler.add_noise(init_latents, noise, timesteps)
 
 		# get prompt text embeddings
