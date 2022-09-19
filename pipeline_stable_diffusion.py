@@ -5,7 +5,6 @@ from typing import List, Optional, Union
 import base64
 import struct
 import PIL.Image
-from tqdm.auto import tqdm
 
 import numpy as np
 import torch
@@ -666,7 +665,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 
 		latents = init_latents
 		t_start = max(num_inference_steps - init_timestep + offset, 0)
-		for i, t in tqdm(enumerate(self.scheduler.timesteps[t_start:])):
+		for i, t in enumerate(self.progress_bar(self.scheduler.timesteps[t_start:])):
 			# expand the latents if we are doing classifier free guidance
 			latent_model_input = torch.cat([latents] * 2) if do_classifier_free_guidance else latents
 
