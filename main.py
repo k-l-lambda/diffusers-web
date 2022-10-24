@@ -26,7 +26,7 @@ DIST_DIR = './dist'
 HTTP_HOST = os.getenv('HTTP_HOST')
 HTTP_PORT = int(os.getenv('HTTP_PORT'))
 HF_TOKEN = os.getenv('HF_TOKEN')
-MODEL_NAME = os.getenv('MODEL_NAME')
+DIFFUSER_MODEL_PATH = os.getenv('DIFFUSER_MODEL_PATH')
 TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
@@ -192,7 +192,7 @@ def randomSentenceV2 ():
 
 def main (argv):
 	global pipe, senGen2
-	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
+	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
 	#senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
