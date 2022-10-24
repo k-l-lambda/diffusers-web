@@ -69,10 +69,11 @@ def paintByText ():
 	width = int(flask.request.args.get('w', 512))
 	height = int(flask.request.args.get('h', 512))
 	img_only = flask.request.args.get('img_only')
+	temperature = float(flask.request.args.get('temperature', 1))
 	#print('paint by text:', prompt, multi)
 
 	if prompt == '***':
-		prompt = senGen.generate(temperature=TEMPERATURE)
+		prompt = senGen2.generate(temperature=temperature)
 
 	global pipe
 	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
@@ -172,6 +173,10 @@ def inpaint():
 def randomSentence ():
 	global senGen
 
+	if senGen is None:
+		device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
+		senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
+
 	return flask.Response(senGen.generate(temperature=TEMPERATURE), mimetype = 'text/plain')
 
 
@@ -186,11 +191,11 @@ def randomSentenceV2 ():
 
 
 def main (argv):
-	global pipe, senGen, senGen2
+	global pipe, senGen2
 	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
-	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
+	#senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
 	senGen2 = SentenceGeneratorV2(TEXTGEN_MODEL_PATH, pipe.tokenizer, device=device)
 
 	if DEVICE:
