@@ -2,6 +2,11 @@
 TODO:
 
 
+2022.10.24	K.L.	<k.l.lambda@gmail.com>
+
+	+	textGen: SentenceGenerator added.
+
+
 2022.9.18	K.L.	<k.l.lambda@gmail.com>
 
 	+	App entry of painter added.
