@@ -95,8 +95,9 @@
 			},
 
 
-			async rollDescription () {
-				const response = await fetch(`/random-sentence`);
+			async rollDescription (event) {
+				const begin = event.shiftKey ? this.description : "";
+				const response = await fetch(`/random-sentence-v2?begin=${begin}`);
 				this.description = await response.text();
 			},
 		},
