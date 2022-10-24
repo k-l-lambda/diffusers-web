@@ -10,6 +10,7 @@ import base64
 import math
 import torch
 import numpy as np
+#import logging
 
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
@@ -84,7 +85,7 @@ def paintByText ():
 
 		res = flask.Response(fp.getvalue(), mimetype = 'image/png')
 
-		filename = re.sub(r'[^\w\s]', '', prompt)[:240]
+		filename = re.sub(r'[^\w\s]', '', prompt)[:240].encode("ascii", "ignore").decode()
 		res.headers['Content-Disposition'] = f'inline; filename="{filename}.png"'
 
 		return res
@@ -95,7 +96,7 @@ def paintByText ():
 		'latents': result['latents'],
 	}
 
-	return flask.Response(json.dumps(result), mimetype = 'application/json')
+	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
 
 
 @app.route('/img2img', methods=['POST'])
@@ -128,7 +129,7 @@ def img2img ():
 		'latent': result['latents'][0],
 	}
 
-	return flask.Response(json.dumps(result), mimetype = 'application/json')
+	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
 
 
 @app.route('/inpaint', methods=['POST'])
