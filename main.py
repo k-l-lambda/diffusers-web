@@ -14,6 +14,7 @@ import numpy as np
 import env
 from pipeline_stable_diffusion import StableDiffusionPipeline
 from sentenceGen import SentenceGenerator
+from textGen import SentenceGenerator as SentenceGeneratorV2
 
 
 
@@ -26,6 +27,7 @@ HTTP_HOST = os.getenv('HTTP_HOST')
 HTTP_PORT = int(os.getenv('HTTP_PORT'))
 HF_TOKEN = os.getenv('HF_TOKEN')
 MODEL_NAME = os.getenv('MODEL_NAME')
+TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
 
@@ -173,12 +175,24 @@ def randomSentence ():
 	return flask.Response(senGen.generate(temperature=TEMPERATURE), mimetype = 'text/plain')
 
 
+@app.route('/random-sentence-v2', methods=['GET'])
+def randomSentenceV2 ():
+	global senGen2
+
+	temperature = float(flask.request.args.get('temperature', 1))
+	begin = flask.request.args.get('begin', '')
+
+	return flask.Response(senGen2.generate(leading_text=begin, temperature=temperature), mimetype='text/plain')
+
+
 def main (argv):
-	global pipe, senGen
+	global pipe, senGen, senGen2
 	pipe = StableDiffusionPipeline.from_pretrained(MODEL_NAME, use_auth_token=HF_TOKEN)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
 	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
+	senGen2 = SentenceGeneratorV2(TEXTGEN_MODEL_PATH, pipe.tokenizer, device=device)
+
 	if DEVICE:
 		pipe.to(DEVICE)
 
