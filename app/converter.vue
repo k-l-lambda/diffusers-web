@@ -63,6 +63,11 @@
 		},
 
 
+		created () {
+			window.$main = this;
+		},
+
+
 		methods: {
 			onPaste(event) {
 				const image = [...event.clipboardData.items].filter(item => item.type.match(/image/))[0];
