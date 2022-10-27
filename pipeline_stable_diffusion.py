@@ -19,9 +19,6 @@ from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMSchedu
 #from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 
 
-logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
-
-
 
 LATENTS_SCALING = 0.18215
 
@@ -651,7 +648,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 
 		if text_input_ids.shape[-1] > self.tokenizer.model_max_length:
 			removed_text = self.tokenizer.batch_decode(text_input_ids[:, self.tokenizer.model_max_length :])
-			logger.warning(
+			logging.warning(
 				"The following part of your input was truncated because CLIP can only handle sequences up to"
 				f" {self.tokenizer.model_max_length} tokens: {removed_text}"
 			)
