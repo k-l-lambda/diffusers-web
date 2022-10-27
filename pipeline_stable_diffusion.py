@@ -544,8 +544,6 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		prompt: Union[str, List[str]],
 		image: Union[torch.FloatTensor, PIL.Image.Image],
 		mask_image: Union[torch.FloatTensor, PIL.Image.Image],
-		height: int = 512,
-		width: int = 512,
 		num_inference_steps: Optional[int] = 50,
 		guidance_scale: Optional[float] = 7.5,
 		negative_prompt: Optional[Union[str, List[str]]] = None,
@@ -619,6 +617,8 @@ class StableDiffusionPipeline (DiffusionPipeline):
 			list of `bool`s denoting whether the corresponding generated image likely represents "not-safe-for-work"
 			(nsfw) content, according to the `safety_checker`.
 		"""
+
+		width, height = mask_image.width, mask_image.height
 
 		if isinstance(prompt, str):
 			batch_size = 1
