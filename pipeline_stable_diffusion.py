@@ -109,7 +109,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		#feature_extractor: CLIPFeatureExtractor,
 	):
 		super().__init__()
-		scheduler = scheduler.set_format("pt")
+		#scheduler = scheduler.set_format("pt")
 		self.register_modules(
 			vae=vae,
 			text_encoder=text_encoder,
@@ -552,6 +552,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		num_images_per_prompt: Optional[int] = 1,
 		eta: Optional[float] = 0.0,
 		generator: Optional[torch.Generator] = None,
+		latents: Optional[torch.FloatTensor] = None,
 		output_type: Optional[str] = "pil",
 		callback: Optional[Callable[[int, int, torch.FloatTensor], None]] = None,
 		callback_steps: Optional[int] = 1,

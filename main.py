@@ -154,10 +154,10 @@ def inpaint():
 
 	#source = PIL.Image.fromarray((source_arr * 255).astype(np.uint8))
 	source = PIL.Image.fromarray(data[:, :, :3])
-	mask = PIL.Image.fromarray(data[:, :, 3])
+	mask = PIL.Image.fromarray(255 - data[:, :, 3])
 
 	global pipe
-	result = pipe.inpaint(prompt, image=source, mask_image=mask, num_inference_steps=n_steps, strength=strength)
+	result = pipe.inpaint(prompt, image=source, mask_image=mask, num_inference_steps=n_steps)
 
 	#result_arr = np.array(result['images'][0]).astype(np.float32) / 255.
 	#result_arr = result_arr * (1 - mask_arr) + source_arr * mask_arr
