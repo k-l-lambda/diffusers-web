@@ -8,6 +8,7 @@ import json
 import PIL.Image
 import random
 import numpy as np
+import time
 
 import env
 
@@ -105,6 +106,8 @@ def inpaint():
 
 	fp = io.BytesIO()
 	result.save(fp, PIL.Image.registered_extensions()['.png'])
+
+	time.sleep(2)
 
 	return flask.Response(fp.getvalue(), mimetype = 'image/png')
 

@@ -22,9 +22,10 @@
 				/>
 			</div>
 		</main>
+		<Loading v-if="painting" />
 		<header>
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
-			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps"  v-show="false" />
+			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
 			<section>
 				<button @click="clear">&#x239A;</button>
 				<button @click="copy">&#x2398;</button>
@@ -32,8 +33,8 @@
 			</section>
 			<section>
 				<input class="description" v-model="description" type="text" placeholder="prompt text" />
-				<input type="number" v-model.number="n_steps" min="1" max="250" style="width: 2em" />
-				<button @click="inpaint">&#x1f58c;</button>
+				<input type="number" v-model.number="n_steps" min="1" max="250" title="steps" style="width: 2em" />
+				<button @click="inpaint" :disabled="painting">&#x1f58c;</button>
 			</section>
 		</header>
 	</div>
@@ -42,6 +43,7 @@
 <script>
 	import StoreInput from "./storeinput.vue";
 	import ResizeBox from "./resizeBox.vue";
+	import Loading from "./loading-dots.vue";
 
 	import {downloadURL} from "./utils";
 
@@ -59,6 +61,7 @@
 		components: {
 			StoreInput,
 			ResizeBox,
+			Loading,
 		},
 
 
@@ -81,6 +84,7 @@
 				description: "",
 				n_steps: 50,
 				//strength: 0.5,
+				painting: false,
 			};
 		},
 
@@ -88,6 +92,23 @@
 		created () {
 			window.$main = this;
 			this.contentRect = null;
+
+			document.addEventListener("keydown", event => {
+				if (["INPUT", "TEXTAREA"].includes(document.activeElement.nodeName))
+					return;
+
+				switch (event.code) {
+				case "KeyC":
+					if (event.ctrlKey)
+						this.copy();
+
+					break;
+				case "F9":
+					this.inpaint();
+
+					break;
+				}
+			});
 		},
 
 
@@ -252,19 +273,28 @@
 
 
 			async inpaint () {
-				const image = await this.getImageBlock(this.diffuserBox);
+				this.painting = true;
 
-				const form = new FormData();
-				form.append("image", image);
+				try {
+					const image = await this.getImageBlock(this.diffuserBox);
 
-				const response = await fetch(`/inpaint?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}`, {
-					method: "POST",
-					body: form,
-				});
-				const result = await response.blob();
-				//console.log("result:", result);
+					const form = new FormData();
+					form.append("image", image);
 
-				this.pasteImage(URL.createObjectURL(result), this.diffuserBox.left, this.diffuserBox.top);
+					const response = await fetch(`/inpaint?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}`, {
+						method: "POST",
+						body: form,
+					});
+					const result = await response.blob();
+					//console.log("result:", result);
+
+					this.pasteImage(URL.createObjectURL(result), this.diffuserBox.left, this.diffuserBox.top);
+				}
+				catch (err) {
+					console.warn("inpaint error:", err);
+				}
+
+				this.painting = false;
 			},
 		},
 
@@ -295,7 +325,7 @@
 		transition: opacity .4s;
 	}
 
-	.painter header:hover
+	.painter header:hover, .painter header:focus-within
 	{
 		opacity: 1;
 	}
