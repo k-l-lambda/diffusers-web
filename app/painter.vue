@@ -85,6 +85,12 @@
 		},
 
 
+		created () {
+			window.$main = this;
+			this.contentRect = null;
+		},
+
+
 		mounted () {
 			this.canvasSize.width = this.$refs.main.clientWidth;
 			this.canvasSize.height = this.$refs.main.clientHeight;
@@ -113,6 +119,18 @@
 			},
 
 
+			extendContentRect (x, y, width, height) {
+				if (!this.contentRect)
+					this.contentRect = {left: x, right: x + width, top: y, bottom: y + height};
+				else {
+					this.contentRect.left = Math.min(this.contentRect.left, x);
+					this.contentRect.right = Math.max(this.contentRect.right, x + width);
+					this.contentRect.top = Math.min(this.contentRect.top, y);
+					this.contentRect.bottom = Math.max(this.contentRect.bottom, y + height);
+				}
+			},
+
+
 			async pasteImage (url, x, y) {
 				const img = new Image();
 				img.src = url;
@@ -124,23 +142,36 @@
 				//console.log('paste:', img, this.pointerPosition);
 
 				this.ctx.drawImage(img, x, y);
+
+				this.extendContentRect(x, y, img.width, img.height);
 			},
 
 
 			clear () {
 				this.ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
+				this.contentRect = null;
 			},
 
 
 			async copy () {
-				const blob = await new Promise(resolve => this.$refs.canvas.toBlob(resolve, "image/png"));
+				if (!this.contentRect) {
+					console.warn("no content.");
+					return;
+				}
+
+				const blob = await this.getImageBlock(this.contentRect);
 				const result = await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
 				console.log("copy:", result);
 			},
 
 
 			async download () {
-				const blob = await new Promise(resolve => this.$refs.canvas.toBlob(resolve, "image/png"));
+				if (!this.contentRect) {
+					console.warn("no content.");
+					return;
+				}
+
+				const blob = await this.getImageBlock(this.contentRect);
 				downloadURL(URL.createObjectURL(blob), `[painter]${Date.now().toString()}.png`);
 			},
 

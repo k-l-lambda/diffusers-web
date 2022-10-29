@@ -2,6 +2,11 @@
 TODO:
 
 
+2022.10.29	K.L.	<k.l.lambda@gmail.com>
+
+	+	painter.vue: content rect added.
+
+
 2022.10.24	K.L.	<k.l.lambda@gmail.com>
 
 	+	textGen: SentenceGenerator added.
