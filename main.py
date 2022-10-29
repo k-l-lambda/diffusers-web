@@ -26,6 +26,7 @@ DIST_DIR = './dist'
 
 HTTP_HOST = os.getenv('HTTP_HOST')
 HTTP_PORT = int(os.getenv('HTTP_PORT'))
+SSL_CONTEXT = eval(os.getenv('SSL_CONTEXT'))
 HF_TOKEN = os.getenv('HF_TOKEN')
 DIFFUSER_MODEL_PATH = os.getenv('DIFFUSER_MODEL_PATH')
 TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
@@ -203,7 +204,7 @@ def main (argv):
 		pipe.to(DEVICE)
 
 	try:
-		app.run(port=HTTP_PORT, host=HTTP_HOST, threaded=False)
+		app.run(port=HTTP_PORT, host=HTTP_HOST, threaded=False, ssl_context=SSL_CONTEXT)
 	except:
 		print('server interrupted:', sys.exc_info())
 
