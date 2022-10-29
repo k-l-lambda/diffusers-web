@@ -94,12 +94,14 @@ def inpaint():
 	#print('image:', image.size)
 
 	data = np.array(image)
-	print('data:', data.shape)
+	#print('data:', data.shape)
 
-	source = PIL.Image.fromarray(data[:, :, :3])
-	mask = PIL.Image.fromarray(data[:, :, 3])
+	source = data[:, :, :3] / 255.
+	mask = data[:, :, 3:] / 255.
 
-	result = PIL.Image.fromarray(data[::-1, ::-1, :3])
+	result = source * mask + np.random.randn(*source.shape) * (1 - mask)
+	result = (result * 255).astype(np.uint8)
+	result = PIL.Image.fromarray(result)
 
 	fp = io.BytesIO()
 	result.save(fp, PIL.Image.registered_extensions()['.png'])
