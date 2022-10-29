@@ -111,7 +111,7 @@
 
 
 			onMove (event) {
-				if (this.resizing) {
+				if (this.resizing && !event.ctrlKey) {
 					const {movementX, movementY} = event;
 
 					if (!this.tx && !this.ty) {
@@ -162,6 +162,11 @@
 		display: grid;
 		grid-template-columns: 7px 1fr 7px;
 		grid-template-rows: 7px 1fr 7px;
+	}
+
+	.resize-box .label
+	{
+		background-color: #fffa;
 	}
 
 	.resize-box.resizing .inner

@@ -11,7 +11,7 @@
 					width: `${canvasSize.width}px`,
 					height: `${canvasSize.height}px`,
 				}"
-				@mousemove="pointerPosition.x = $event.offsetX; pointerPosition.y = $event.offsetY"
+				@mousemove="onBenchMouseMove"
 			>
 				<ResizeBox class="diffuser-box"
 					:left.sync="diffuserBox.left"
@@ -65,8 +65,8 @@
 		data () {
 			return {
 				canvasSize: {
-					width: 1280,
-					height: 720,
+					width: 4096,
+					height: 4096,
 				},
 				pointerPosition: {
 					x: 0,
@@ -92,15 +92,23 @@
 
 
 		mounted () {
-			this.canvasSize.width = this.$refs.main.clientWidth;
-			this.canvasSize.height = this.$refs.main.clientHeight;
+			//this.canvasSize.width = this.$refs.main.clientWidth;
+			//this.canvasSize.height = this.$refs.main.clientHeight;
+			this.$refs.main.scrollLeft = (this.canvasSize.width - this.$refs.main.clientWidth) / 2;
+			this.$refs.main.scrollTop = (this.canvasSize.height - this.$refs.main.clientHeight) / 2;
+
+			const [w, h] = [this.diffuserBox.right - this.diffuserBox.left, this.diffuserBox.bottom - this.diffuserBox.top];
+			this.diffuserBox.left = (this.canvasSize.width - w) / 2;
+			this.diffuserBox.top = (this.canvasSize.height - h) / 2;
+			this.diffuserBox.right = this.diffuserBox.left + w;
+			this.diffuserBox.bottom = this.diffuserBox.top + h;
 
 			this.ctx = this.$refs.canvas.getContext("2d");
 		},
 
 
 		methods: {
-			onPaste(event) {
+			onPaste (event) {
 				const image = [...event.clipboardData.items].filter(item => item.type.match(/image/))[0];
 				if (image) {
 					const file = image.getAsFile();
@@ -109,13 +117,27 @@
 			},
 
 
-			onDropFiles(event) {
+			onDropFiles (event) {
 				this.drageHover = false;
 
 				const file = event.dataTransfer.files[0];
 				if (file)
 					if (/^image/.test(file.type))
 						this.pasteImage(URL.createObjectURL(file), this.pointerPosition.x, this.pointerPosition.y);
+			},
+
+
+			onBenchMouseMove (event) {
+				if (event.buttons == 1) {
+					if (event.ctrlKey) {
+						this.$refs.main.scrollLeft -= event.movementX;
+						this.$refs.main.scrollTop -= event.movementY;
+					}
+				}
+				else {
+					this.pointerPosition.x = event.offsetX;
+					this.pointerPosition.y = event.offsetY
+				}
 			},
 
 
@@ -183,10 +205,14 @@
 				let rh = Math.round(height / ROUND_UNIT) * ROUND_UNIT;
 
 				if (rw * rh > PIXEL_MAX) {
-					if (ty)
+					if (ty) {
 						rh = PIXEL_MAX / rw;
-					else
+						rh = Math.round(rh / ROUND_UNIT) * ROUND_UNIT;
+					}
+					else {
 						rw = PIXEL_MAX / rh;
+						rw = Math.round(rw / ROUND_UNIT) * ROUND_UNIT;
+					}
 				}
 
 				if (rw !== width) {
@@ -287,7 +313,7 @@
 	.painter main
 	{
 		height: 100%;
-		overflow: hidden;
+		overflow: scroll;
 		position: relative;
 	}
 
@@ -309,6 +335,6 @@
 
 	.diffuser-box
 	{
-		border: dashed 2px #111;
+		outline: dashed 2px #111;
 	}
 </style>
