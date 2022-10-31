@@ -5,7 +5,8 @@ import re
 import flask
 import json
 import io
-import PIL.Image
+import PIL
+import PIL.PngImagePlugin
 import base64
 import math
 import torch
@@ -56,9 +57,15 @@ for path in pageRouters:
 	app.route(path, endpoint = 'handler' + path)(getHandler(pageRouters[path]))
 
 
-def encodeImageToDataURL (image):
+def encodeImageToDataURL (image, info):
+	option = None
+	if info:
+		option = PIL.PngImagePlugin.PngInfo()
+		for key, value in info.items():
+			option.add_itxt(key, value)
+
 	fp = io.BytesIO()
-	image.save(fp, PIL.Image.registered_extensions()['.png'])
+	image.save(fp, PIL.Image.registered_extensions()['.png'], pnginfo=option)
 
 	return 'data:image/png;base64,%s' % base64.b64encode(fp.getvalue()).decode('ascii')
 
@@ -93,7 +100,7 @@ def paintByText ():
 
 	result = {
 		'prompt': prompt,
-		'images': list(map(encodeImageToDataURL, result['images'])),
+		'images': [encodeImageToDataURL(img, {'prompt': prompt}) for img in result['images']],
 		'latents': result['latents'],
 	}
 
@@ -126,7 +133,7 @@ def img2img ():
 	result = {
 		'prompt': prompt,
 		'source': encodeImageToDataURL(image),
-		'image': encodeImageToDataURL(result['images'][0]),
+		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt}),
 		'latent': result['latents'][0],
 	}
 
