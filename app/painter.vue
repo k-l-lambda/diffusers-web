@@ -1,5 +1,6 @@
 <template>
 	<div class="painter"
+		@copy="onCopy"
 		@paste="onPaste"
 	>
 		<main ref="main">
@@ -98,11 +99,11 @@
 					return;
 
 				switch (event.code) {
-				case "KeyC":
+				/*case "KeyC":
 					if (event.ctrlKey)
 						this.copy();
 
-					break;
+					break;*/
 				case "F9":
 					this.inpaint();
 
@@ -135,6 +136,12 @@
 					const file = image.getAsFile();
 					this.pasteImage(URL.createObjectURL(file), this.pointerPosition.x, this.pointerPosition.y);
 				}
+			},
+
+
+			onCopy () {
+				if (!["INPUT", "TEXTAREA"].includes(document.activeElement.nodeName))
+					this.copy();
 			},
 
 
@@ -204,7 +211,7 @@
 
 				const blob = await this.getImageBlock(this.contentRect);
 				const result = await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-				console.log("copy:", result);
+				console.debug("copy:", result);
 			},
 
 
