@@ -1,5 +1,11 @@
 # Diffusers Web
 
+# Features
+
+![text2image](./doc/text2image.gif)
+
+<video src="./doc/text2image.mp4" autoplay></video>
+
 ## Local Enviroment Variables
 Edit local enviroment variables in file *.env.local*.
 
