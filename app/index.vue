@@ -23,12 +23,12 @@
 			</span>
 			<button class="submit" @click="paintByText">&#x1f4ad;</button>
 		</header>
-		<main>
+		<main ref="main">
 			<section v-for="(result, i) of results" :key="i">
 				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
 				<div v-if="result.images">
 					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
-						<img :src="img" />
+						<img :src="img" @load="onImageLoad" />
 						<a class="download" :href="img" :download="`${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
 					</div>
 				</div>
@@ -99,6 +99,11 @@
 				const begin = event.shiftKey ? this.description : "";
 				const response = await fetch(`/random-sentence-v2?begin=${begin}`);
 				this.description = await response.text();
+			},
+
+
+			onImageLoad () {
+				this.$refs.main.scrollTo(0, this.$refs.main.scrollHeight);
 			},
 		},
 	};
