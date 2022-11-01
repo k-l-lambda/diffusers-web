@@ -1,10 +1,20 @@
 # Diffusers Web
 
-# Features
+## Features
+
+### Text to image
 
 ![text2image](./doc/text2image.gif)
 
-<video src="./doc/text2image.mp4" autoplay></video>
+## Image transform
+
+![transform](./doc/transform.gif)
+
+# Mask and outpainting
+
+![mask](./doc/mask.gif)
+
+![outpaint](./doc/outpaint.gif)
 
 ## Local Enviroment Variables
 Edit local enviroment variables in file *.env.local*.
