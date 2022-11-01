@@ -6,11 +6,11 @@
 
 ![text2image](./doc/text2image.gif)
 
-## Image transform
+### Image transform
 
 ![transform](./doc/transform.gif)
 
-# Mask and outpainting
+### Mask and outpainting
 
 ![mask](./doc/mask.gif)
 
