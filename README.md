@@ -38,7 +38,7 @@ Then navigate to *http://localhost:8157/painter*.
 
 ![outpaint](./doc/outpaint.gif)
 
-Tips: image copy in web page other than *localhost* required *https* protocol, config `SSL_CONTEXT="'adhoc'"` in `.env.local` to achieve this.
+Tips: image copy in a web page other than *localhost* requires *https* protocol, config `SSL_CONTEXT="'adhoc'"` in `.env.local` to achieve this.
 
 ## Requirements
 
@@ -46,9 +46,9 @@ Tips: image copy in web page other than *localhost* required *https* protocol, c
 
 A GPU with CUDA capability is required for good performence. The more video memory the better, 24GB is recommended.
 
-### Python
+### Python Libraries
 
-Install requirement libraries with pip, reference to [requirements.txt](./requirements.txt).
+Install dependency libraries with pip, reference to [requirements.txt](./requirements.txt).
 
 ### Authorization
 
