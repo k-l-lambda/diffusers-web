@@ -1,5 +1,17 @@
 # Diffusers Web
 
+This project is a web based image generation tool, a front-end wrapper for [HuggingFace's diffusers](https://github.com/huggingface/diffusers).
+
+## Usage
+
+Run the web server:
+
+```.bash
+python ./main.py
+```
+
+If this works, navigate to *http://localhost:8157* in your browser.
+
 ## Features
 
 ### Text to image
@@ -8,13 +20,33 @@
 
 ### Image transform
 
+Navigate to *http://localhost:8157/converter*.
+
 ![transform](./doc/transform.gif)
 
 ### Mask and outpainting
 
+Before run web server, config the diffuser model to a inpainting model. e.g. add a environment variable in `.env.local`:
+
+```
+DIFFUSER_MODEL_PATH=runwayml/stable-diffusion-inpainting
+```
+
+Then navigate to *http://localhost:8157/painter*.
+
 ![mask](./doc/mask.gif)
 
 ![outpaint](./doc/outpaint.gif)
+
+## Requirements
+
+### Hardware
+
+A GPU with CUDA capability is required for good performence. The more video memory the better, 24GB is recommended.
+
+### Python
+
+Install requirement libraries with pip, reference to [requirements.txt](./requirements.txt).
 
 ## Local Enviroment Variables
 Edit local enviroment variables in file *.env.local*.
