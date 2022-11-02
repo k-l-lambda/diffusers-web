@@ -24,7 +24,7 @@ Navigate to *http://localhost:8157/converter*.
 
 ![transform](./doc/transform.gif)
 
-### Mask and outpainting
+### Inpainting and outpainting
 
 Before run web server, config the diffuser model to an inpainting model. E.g. add an environment variable in `.env.local`:
 
