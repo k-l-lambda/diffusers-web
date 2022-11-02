@@ -54,9 +54,9 @@ Install dependency libraries with pip, reference to [requirements.txt](./require
 
 You may need a [HuggingFace access token](https://huggingface.co/settings/tokens) to download pretrained models for the first running.
 
-## Local Enviroment Variables
+## Local Environment Variables
 
-Edit local enviroment variables in file *.env.local*.
+Edit local environment variables in file *.env.local*.
 
 Variable Name						| Default Value						| Description
 :--									| :--								| :--
