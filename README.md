@@ -26,7 +26,7 @@ Navigate to *http://localhost:8157/converter*.
 
 ### Mask and outpainting
 
-Before run web server, config the diffuser model to a inpainting model. e.g. add a environment variable in `.env.local`:
+Before run web server, config the diffuser model to an inpainting model. E.g. add an environment variable in `.env.local`:
 
 ```
 DIFFUSER_MODEL_PATH=runwayml/stable-diffusion-inpainting
@@ -50,7 +50,12 @@ A GPU with CUDA capability is required for good performence. The more video memo
 
 Install requirement libraries with pip, reference to [requirements.txt](./requirements.txt).
 
+### Authorization
+
+You may need a [HuggingFace access token](https://huggingface.co/settings/tokens) to download pretrained models for the first running.
+
 ## Local Enviroment Variables
+
 Edit local enviroment variables in file *.env.local*.
 
 Variable Name						| Default Value						| Description
