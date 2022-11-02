@@ -38,6 +38,8 @@ Then navigate to *http://localhost:8157/painter*.
 
 ![outpaint](./doc/outpaint.gif)
 
+Tips: image copy in web page other than *localhost* required *https* protocol, config `SSL_CONTEXT="'adhoc'"` in `.env.local` to achieve this.
+
 ## Requirements
 
 ### Hardware
@@ -56,7 +58,7 @@ Variable Name						| Default Value						| Description
 **HF_TOKEN**						|									| Your HuggingFace access token. If a local config path provided, this can be ignored.
 **DIFFUSER_MODEL_PATH**				| CompVis/stable-diffusion-v1-4		| This can be a local model config path.
 **TEXTGEN_MODEL_PATH**				| k-l-lambda/clip-text-generator	| The random painting description generator model path. This can be a local model config path.
-**HTTP_HOST**						| 127.0.0.1							|
+**HTTP_HOST**						| 127.0.0.1							| Use `0.0.0.0` for network access.
 **HTTP_PORT**						| 8157								|
 **SSL_CONTEXT**						| None								| Use `'adhoc'` for https server.
 **DEVICE**							|									| `cuda` or *None*
