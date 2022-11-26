@@ -2,6 +2,11 @@
 TODO:
 
 
+2022.11.26	K.L.	<k.l.lambda@gmail.com>
+
+	+	pipeline_stable_diffusion.py: upgrade generator pipeline to diffusers v0.9.
+
+
 2022.10.31	K.L.	<k.l.lambda@gmail.com>
 
 	+	main.py: appended prompt text in PNG file.
