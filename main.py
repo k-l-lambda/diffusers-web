@@ -57,7 +57,7 @@ for path in pageRouters:
 	app.route(path, endpoint = 'handler' + path)(getHandler(pageRouters[path]))
 
 
-def encodeImageToDataURL (image, info):
+def encodeImageToDataURL (image, info=None):
 	option = None
 	if info:
 		option = PIL.PngImagePlugin.PngInfo()
