@@ -2,6 +2,6 @@ python-dotenv
 Flask==2.1.0
 numpy
 Pillow
-diffusers==0.3.0
+diffusers==0.6.0
 torch
 transformers
