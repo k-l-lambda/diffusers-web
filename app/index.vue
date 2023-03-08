@@ -5,10 +5,12 @@
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
+			<StoreInput sessionKey="seed" type="number" v-model="seed" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
 			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
 			<StoreInput sessionKey="size_h" type="number" v-model="height" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
+			<input type="text" v-model.number="seed" placeholder="seed" :size="1" />
 			<select v-model.number="multi">
 				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
 			</select>
@@ -68,6 +70,7 @@
 				n_steps: 50,
 				width: 512,
 				height: 512,
+				seed: null,
 			};
 		},
 
@@ -80,7 +83,11 @@
 				};
 				this.results.push(item);
 
-				const response = await fetch(`/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`);
+				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`;
+				if (Number.isInteger(this.seed))
+					url += `&seed=${this.seed}`;
+
+				const response = await fetch(url);
 				if (response.ok) {
 					const result = await response.json();
 					if (result.images)

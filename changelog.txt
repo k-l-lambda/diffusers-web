@@ -2,6 +2,11 @@
 TODO:
 
 
+2023.3.8	K.L.	<k.l.lambda@gmail.com>
+
+	+	index.vue: added control of seed.
+
+
 2022.11.26	K.L.	<k.l.lambda@gmail.com>
 
 	+	pipeline_stable_diffusion.py: upgrade generator pipeline to diffusers v0.9.
