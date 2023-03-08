@@ -2,8 +2,10 @@
 	<div class="home">
 		<header>
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
+			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput sessionKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
 			<StoreInput sessionKey="seed" type="number" v-model="seed" v-show="false" />
 			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
@@ -65,6 +67,7 @@
 		data () {
 			return {
 				description: null,
+				negativeDescription: null,
 				results: [],
 				multi: 1,
 				n_steps: 50,
@@ -83,9 +86,11 @@
 				};
 				this.results.push(item);
 
-				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description)}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`;
+				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description || "")}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`;
 				if (Number.isInteger(this.seed))
 					url += `&seed=${this.seed}`;
+				if (this.negativeDescription)
+					url += `&neg_prompt=${encodeURIComponent(this.negativeDescription)}`;
 
 				const response = await fetch(url);
 				if (response.ok) {
