@@ -79,13 +79,20 @@ def paintByText ():
 	height = int(flask.request.args.get('h', 512))
 	img_only = flask.request.args.get('img_only')
 	temperature = float(flask.request.args.get('temperature', 1))
+	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
 	#print('paint by text:', prompt, multi)
 
 	if prompt == '***':
 		prompt = senGen2.generate(temperature=temperature)
 
 	global pipe
-	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
+
+	generator = None
+	if seed is not None:
+		generator = torch.Generator(pipe.device)
+		generator.manual_seed(seed)
+
+	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height, generator=generator)
 
 	if img_only is not None:
 		fp = io.BytesIO()
