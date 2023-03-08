@@ -73,6 +73,7 @@ def encodeImageToDataURL (image, info=None):
 @app.route('/paint-by-text', methods=['GET'])
 def paintByText ():
 	prompt = flask.request.args.get('prompt')
+	neg_prompt = flask.request.args.get('neg_prompt', None)
 	multi = int(flask.request.args.get('multi', 1))
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	width = int(flask.request.args.get('w', 512))
@@ -92,7 +93,7 @@ def paintByText ():
 		generator = torch.Generator(pipe.device)
 		generator.manual_seed(seed)
 
-	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height, generator=generator)
+	result = pipe.generate([prompt] * multi, negative_prompt=[neg_prompt] * multi if neg_prompt is not None else None, num_inference_steps=n_steps, width=width, height=height, generator=generator)
 
 	if img_only is not None:
 		fp = io.BytesIO()
