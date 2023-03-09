@@ -120,6 +120,7 @@ def img2img ():
 	prompt = flask.request.args.get('prompt')
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	strength = float(flask.request.args.get('strength', 0.5))
+	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
 
 	imageFile = flask.request.files.get('image')
 	if not imageFile:
@@ -136,7 +137,13 @@ def img2img ():
 	#print('image:', image.size, scaling)
 
 	global pipe
-	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
+
+	generator = None
+	if seed is not None:
+		generator = torch.Generator(pipe.device)
+		generator.manual_seed(seed)
+
+	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=generator)
 
 	result = {
 		'prompt': prompt,
