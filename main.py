@@ -84,8 +84,11 @@ def paintByText ():
 	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
 	#print('paint by text:', prompt, multi)
 
+	global senGen, senGen2
 	if prompt == '***':
 		prompt = senGen2.generate(temperature=temperature)
+	elif prompt == '**':
+		prompt = senGen.generate(temperature=temperature)
 
 	global pipe
 
@@ -216,11 +219,11 @@ def randomSentenceV2 ():
 
 
 def main (argv):
-	global pipe, senGen2
+	global pipe, senGen2, senGen
 	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
-	#senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
+	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
 	senGen2 = SentenceGeneratorV2(TEXTGEN_MODEL_PATH, pipe.tokenizer, device=device)
 
 	if DEVICE:
