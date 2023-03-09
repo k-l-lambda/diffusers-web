@@ -62,7 +62,8 @@ def encodeImageToDataURL (image, info=None):
 	if info:
 		option = PIL.PngImagePlugin.PngInfo()
 		for key, value in info.items():
-			option.add_itxt(key, value)
+			if value is not None:
+				option.add_itxt(key, value)
 
 	fp = io.BytesIO()
 	image.save(fp, PIL.Image.registered_extensions()['.png'], pnginfo=option)
@@ -108,7 +109,7 @@ def paintByText ():
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, {'prompt': prompt}) for img in result['images']],
+		'images': [encodeImageToDataURL(img, {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}) for img in result['images']],
 		'latents': result['latents'],
 	}
 
@@ -148,7 +149,7 @@ def img2img ():
 	result = {
 		'prompt': prompt,
 		'source': encodeImageToDataURL(image),
-		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt}),
+		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt, 'seed': str(seed)}),
 		'latent': result['latents'][0],
 	}
 
