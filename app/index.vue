@@ -78,6 +78,11 @@
 		},
 
 
+		created () {
+			window.$main = this;
+		},
+
+
 		methods: {
 			async paintByText () {
 				const item = {
