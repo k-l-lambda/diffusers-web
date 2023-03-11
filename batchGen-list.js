@@ -37,7 +37,7 @@ const main = async argv => {
 	const listText = fs.readFileSync(argv[2]).toString();
 	const prompts = listText.split("\r\n");
 	const negPrompt = encodeURIComponent("painting, cartoon, (worst quality, low quality: 1.3), distorted fingers, extra fingers, bad fingers, fingers, cosmetics, moles under the eyes, moles, signs, watermarks, text");
-	const fetcher = prompt => fetch(`${argv[3]}/paint-by-text?prompt=${encodeURIComponent(prompt)}&neg_prompt=${negPrompt}&img_only&w=512&h=1024&n_steps=50`);
+	const fetcher = prompt => fetch(`${argv[3]}/paint-by-text?prompt=${encodeURIComponent(prompt)}&neg_prompt=${negPrompt}&img_only&w=512&h=1024&n_steps=50&ext=webp`);
 	const dir = argv[4] || "./";
 
 	let i = 0;

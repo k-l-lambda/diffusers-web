@@ -57,7 +57,7 @@ for path in pageRouters:
 	app.route(path, endpoint = 'handler' + path)(getHandler(pageRouters[path]))
 
 
-def encodeImageToDataURL (image, info=None):
+def encodeImageToDataURL (image, info=None, ext='.png'):
 	option = None
 	if info:
 		option = PIL.PngImagePlugin.PngInfo()
@@ -66,7 +66,7 @@ def encodeImageToDataURL (image, info=None):
 				option.add_itxt(key, value)
 
 	fp = io.BytesIO()
-	image.save(fp, PIL.Image.registered_extensions()['.png'], pnginfo=option)
+	image.save(fp, PIL.Image.registered_extensions()[ext], pnginfo=option)
 
 	return 'data:image/png;base64,%s' % base64.b64encode(fp.getvalue()).decode('ascii')
 
@@ -82,6 +82,7 @@ def paintByText ():
 	img_only = flask.request.args.get('img_only')
 	temperature = float(flask.request.args.get('temperature', 1))
 	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
+	ext = flask.request.args.get('ext', '.png')
 	#print('paint by text:', prompt, multi)
 
 	global senGen, senGen2
@@ -112,7 +113,7 @@ def paintByText ():
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}) for img in result['images']],
+		'images': [encodeImageToDataURL(img, ext=f'.{ext}', {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}) for img in result['images']],
 		'latents': result['latents'],
 	}
 
