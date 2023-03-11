@@ -59,7 +59,7 @@ for path in pageRouters:
 
 def encodeImageToDataURL (image, info=None, ext='.png'):
 	option = None
-	if info:
+	if info and ext == '.png':
 		option = PIL.PngImagePlugin.PngInfo()
 		for key, value in info.items():
 			if value is not None:
@@ -82,7 +82,7 @@ def paintByText ():
 	img_only = flask.request.args.get('img_only')
 	temperature = float(flask.request.args.get('temperature', 1))
 	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
-	ext = flask.request.args.get('ext', '.png')
+	ext = flask.request.args.get('ext', 'png')
 	#print('paint by text:', prompt, multi)
 
 	global senGen, senGen2
@@ -102,18 +102,18 @@ def paintByText ():
 
 	if img_only is not None:
 		fp = io.BytesIO()
-		result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
+		result['images'][0].save(fp, PIL.Image.registered_extensions()[f'.{ext}'], quality=100)
 
-		res = flask.Response(fp.getvalue(), mimetype = 'image/png')
+		res = flask.Response(fp.getvalue(), mimetype = f'image/${ext}')
 
 		filename = re.sub(r'[^\w\s]', '', prompt)[:240].encode("ascii", "ignore").decode()
-		res.headers['Content-Disposition'] = f'inline; filename="{filename}.png"'
+		res.headers['Content-Disposition'] = f'inline; filename="{filename}.{ext}"'
 
 		return res
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, ext=f'.{ext}', {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}) for img in result['images']],
+		'images': [encodeImageToDataURL(img, {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
 	}
 
