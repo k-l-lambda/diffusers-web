@@ -25,8 +25,8 @@ from diffusers.schedulers import (
 	LMSDiscreteScheduler,
 	PNDMScheduler,
 )
-#from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
-#from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
+from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 
 
 
@@ -122,8 +122,9 @@ class StableDiffusionPipeline (DiffusionPipeline):
 			EulerAncestralDiscreteScheduler,
 			DPMSolverMultistepScheduler,
 		],
-		#safety_checker: StableDiffusionSafetyChecker,
-		#feature_extractor: CLIPFeatureExtractor,
+		safety_checker: StableDiffusionSafetyChecker,
+		feature_extractor: CLIPFeatureExtractor,
+		requires_safety_checker: bool = False,
 	):
 		super().__init__()
 
