@@ -122,8 +122,8 @@ class StableDiffusionPipeline (DiffusionPipeline):
 			EulerAncestralDiscreteScheduler,
 			DPMSolverMultistepScheduler,
 		],
-		safety_checker: StableDiffusionSafetyChecker,
-		feature_extractor: CLIPFeatureExtractor,
+		safety_checker: StableDiffusionSafetyChecker = None,
+		feature_extractor: CLIPFeatureExtractor = None,
 		requires_safety_checker: bool = False,
 	):
 		super().__init__()
