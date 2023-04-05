@@ -30,11 +30,11 @@ const fetchOne = (fetcher, dir) => {
 };
 
 
-const TOTAL = 3;
+const TOTAL = 200;
 
 
 const main = async argv => {
-	const fetcher = () => fetch(`${argv[2]}/paint-by-text?prompt=***&img_only&w=448&h=832`);
+	const fetcher = () => fetch(`${argv[2]}/paint-by-text?prompt=**&img_only&w=512&h=768&ext=webp`);
 	const dir = argv[3] || "./";
 
 	for (let i = 0; i < TOTAL; ++i) {
