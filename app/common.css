@@ -85,3 +85,11 @@ main section .error
 {
 	color: red;
 }
+
+@media (pointer:none), (pointer:coarse)
+{
+	body
+	{
+		padding: 2em 0;
+	}
+}
