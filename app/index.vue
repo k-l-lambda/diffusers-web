@@ -25,7 +25,7 @@
 					<option v-for="i of 30" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 			</span>
-			<button class="submit" @click="paintByText">&#x1f4ad;</button>
+			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main ref="main">
 			<section v-for="(result, i) of results" :key="i">
@@ -74,6 +74,7 @@
 				width: 512,
 				height: 512,
 				seed: null,
+				requesting: false,
 			};
 		},
 
@@ -90,6 +91,7 @@
 					loading: true,
 				};
 				this.results.push(item);
+				this.requesting = true;
 
 				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description || "")}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}`;
 				if (Number.isInteger(this.seed))
@@ -109,6 +111,7 @@
 					item.error = await response.text();
 
 				item.loading = false;
+				this.requesting = false;
 			},
 
 
@@ -133,5 +136,10 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+	}
+
+	.submit.active
+	{
+		background-color: #cfc;
 	}
 </style>

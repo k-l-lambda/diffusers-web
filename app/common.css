@@ -88,8 +88,14 @@ main section .error
 
 @media (pointer:none), (pointer:coarse)
 {
+	html
+	{
+		font-size: 20px;
+	}
+
 	body
 	{
-		padding: 2em 0;
+		box-sizing: border-box;
+		padding: 4em 0;
 	}
 }
