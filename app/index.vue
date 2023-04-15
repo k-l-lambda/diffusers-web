@@ -28,6 +28,7 @@
 			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main ref="main">
+			<button class="purge" @click="results=[]">^</button>
 			<section v-for="(result, i) of results" :key="i">
 				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
 				<div v-if="result.images">
@@ -88,6 +89,8 @@
 			async paintByText () {
 				const item = {
 					prompt: this.description,
+					negative: this.negativeDescription,
+					seed: this.seed,
 					loading: true,
 				};
 				this.results.push(item);
@@ -141,5 +144,22 @@
 	.submit.active
 	{
 		background-color: #cfc;
+	}
+
+	main
+	{
+		position: relative;
+	}
+
+	.purge
+	{
+		display: inline-block;
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		background: none;
+		border: 0;
+		font-size: 200%;
+		color: #aaa;
 	}
 </style>
