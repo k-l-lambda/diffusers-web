@@ -28,7 +28,6 @@
 			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main ref="main">
-			<button class="purge" @click="results=[]">&#x2421;</button>
 			<section v-for="(result, i) of results" :key="i">
 				<div>
 					<button class="activate" @click="activateItem(result)">^</button>
@@ -47,6 +46,7 @@
 				<hr />
 			</section>
 		</main>
+		<button class="purge" @click="results=[]">&#x2421;</button>
 	</div>
 </template>
 
@@ -152,6 +152,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		position: relative;
 	}
 
 	.submit.active
@@ -159,16 +160,11 @@
 		background-color: #cfc;
 	}
 
-	main
-	{
-		position: relative;
-	}
-
 	.purge
 	{
 		display: inline-block;
 		position: absolute;
-		top: 8px;
+		top: 68px;
 		right: 8px;
 		background: none;
 		border: 0;
