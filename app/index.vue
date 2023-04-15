@@ -28,9 +28,15 @@
 			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main ref="main">
-			<button class="purge" @click="results=[]">^</button>
+			<button class="purge" @click="results=[]">&#x2421;</button>
 			<section v-for="(result, i) of results" :key="i">
-				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
+				<div>
+					<button class="activate" @click="activateItem(result)">^</button>
+					<em v-text="result.prompt"></em>
+					<i v-if="result.negative" :title="result.negative">&#x2d31;</i>
+					<span v-if="Number.isFinite(result.seed)">[{{result.seed}}]</span>
+					<span v-if="result.loading">...</span>
+				</div>
 				<div v-if="result.images">
 					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
 						<img :src="img" @load="onImageLoad" />
@@ -128,6 +134,13 @@
 			onImageLoad () {
 				this.$refs.main.scrollTo(0, this.$refs.main.scrollHeight);
 			},
+
+
+			activateItem (item) {
+				this.description = item.prompt;
+				this.negativeDescription = item.negative;
+				this.seed = item.seed;
+			},
 		},
 	};
 </script>
@@ -161,5 +174,19 @@
 		border: 0;
 		font-size: 200%;
 		color: #aaa;
+	}
+
+	i
+	{
+		font-weight: bold;
+		font-style: normal;
+		cursor: default;
+		color: #600;
+	}
+
+	.activate
+	{
+		margin-right: 1em;
+		border: 0;
 	}
 </style>
