@@ -46,7 +46,7 @@
 				<hr />
 			</section>
 		</main>
-		<button class="purge" @click="results=[]">&#x2421;</button>
+		<button class="purge" @click="purgeList">&#x2421;</button>
 	</div>
 </template>
 
@@ -141,6 +141,12 @@
 				this.negativeDescription = item.negative;
 				this.seed = item.seed;
 			},
+
+
+			purgeList () {
+				if (confirm("clear results?"))
+					this.results = [];
+			}
 		},
 	};
 </script>
@@ -164,7 +170,7 @@
 	{
 		display: inline-block;
 		position: absolute;
-		top: 68px;
+		bottom: 8px;
 		right: 8px;
 		background: none;
 		border: 0;
