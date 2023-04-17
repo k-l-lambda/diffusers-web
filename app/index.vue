@@ -4,13 +4,13 @@
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
 			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
-			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
-			<StoreInput sessionKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
-			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps" v-show="false" />
-			<StoreInput sessionKey="seed" type="number" v-model="seed" v-show="false" />
-			<StoreInput sessionKey="multi" type="number" v-model="multi" v-show="false" />
-			<StoreInput sessionKey="size_w" type="number" v-model="width" v-show="false" />
-			<StoreInput sessionKey="size_h" type="number" v-model="height" v-show="false" />
+			<StoreInput localKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput localKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
+			<StoreInput localKey="n_steps" type="number" v-model="n_steps" v-show="false" />
+			<StoreInput localKey="seed" type="number" v-model="seed" v-show="false" />
+			<StoreInput localKey="multi" type="number" v-model="multi" v-show="false" />
+			<StoreInput localKey="size_w" type="number" v-model="width" v-show="false" />
+			<StoreInput localKey="size_h" type="number" v-model="height" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
 			<input type="text" v-model.number="seed" placeholder="seed" :size="1" />
 			<select v-model.number="multi">
