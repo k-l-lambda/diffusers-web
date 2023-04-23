@@ -12,3 +12,4 @@ example.png
 documents
 *.log
 .vscode/
+*.local.*
