@@ -7,6 +7,7 @@ import json
 import io
 import PIL
 import PIL.PngImagePlugin
+import piexif
 import base64
 import math
 import torch
@@ -59,14 +60,17 @@ for path in pageRouters:
 
 def encodeImageToDataURL (image, info=None, ext='.png'):
 	option = None
+	exif = None
 	if info and ext == '.png':
 		option = PIL.PngImagePlugin.PngInfo()
 		for key, value in info.items():
 			if value is not None:
 				option.add_itxt(key, value)
+	else:
+		exif = piexif.dump({'0th': {305: json.dumps(info).encode('ascii')}})[6:]
 
 	fp = io.BytesIO()
-	image.save(fp, PIL.Image.registered_extensions()[ext], pnginfo=option)
+	image.save(fp, PIL.Image.registered_extensions()[ext], pnginfo=option, exif=exif)
 
 	return 'data:image/png;base64,%s' % base64.b64encode(fp.getvalue()).decode('ascii')
 
