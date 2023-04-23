@@ -72,7 +72,7 @@ def encodeImageToDataURL (image, info=None, ext='.png'):
 	fp = io.BytesIO()
 	image.save(fp, PIL.Image.registered_extensions()[ext], pnginfo=option, exif=exif)
 
-	return 'data:image/png;base64,%s' % base64.b64encode(fp.getvalue()).decode('ascii')
+	return 'data:image/%s;base64,%s' % (ext[1:], base64.b64encode(fp.getvalue()).decode('ascii'))
 
 
 @app.route('/paint-by-text', methods=['GET'])
