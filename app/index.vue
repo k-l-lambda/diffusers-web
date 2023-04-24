@@ -1,5 +1,9 @@
 <template>
-	<div class="home">
+	<div class="home"
+		@dragover.prevent="drageHover = true"
+		@dragleave="drageHover = false"
+		@drop.prevent="onDrop"
+	>
 		<header>
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
 			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
@@ -14,9 +18,9 @@
 			<StoreInput localKey="ext" type="text" v-model="ext" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
 			<input type="text" v-model.number="seed" placeholder="seed" :size="1" />
-			<select v-model.number="multi">
+			<!--select v-model.number="multi">
 				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
-			</select>
+			</select-->
 			<span>
 				<select v-model.number="width">
 					<option v-for="i of 30" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
@@ -52,6 +56,8 @@
 </template>
 
 <script>
+	import ExifReader from "exifreader";
+
 	import StoreInput from "./storeinput.vue";
 
 
@@ -84,6 +90,7 @@
 				seed: null,
 				requesting: false,
 				ext: "webp",
+				drageHover: false,
 			};
 		},
 
@@ -135,6 +142,20 @@
 
 			onImageLoad () {
 				this.$refs.main.scrollTo(0, this.$refs.main.scrollHeight);
+			},
+
+
+			async onDrop (event) {
+				const file = event.dataTransfer.files[0];
+				const tags = await ExifReader.load(file);
+				//console.log('tags:', tags);
+				if (tags && tags.Software) {
+					const info = JSON.parse(tags.Software.description);
+					console.log("info:", info);
+					this.description = info.prompt;
+					this.negativeDescription = info.negative_prompt
+					this.seed = Number(info.seed);
+				}
 			},
 
 
