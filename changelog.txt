@@ -2,6 +2,11 @@
 TODO:
 
 
+2023.4.24	K.L.	<k.l.lambda@gmail.com>
+
+	+	main.py: added global rand_generator.
+
+
 2023.3.8	K.L.	<k.l.lambda@gmail.com>
 
 	+	index.vue: added control of negative description.

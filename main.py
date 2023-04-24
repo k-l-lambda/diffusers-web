@@ -96,13 +96,14 @@ def paintByText ():
 		prompt = senGen.generate(temperature=temperature)
 
 	global pipe
+	global rand_generator
 
-	generator = None
 	if seed is not None:
-		generator = torch.Generator(pipe.device)
-		generator.manual_seed(seed)
+		rand_generator.manual_seed(seed)
+	else:
+		seed = rand_generator.seed()
 
-	result = pipe.generate([prompt] * multi, negative_prompt=[neg_prompt] * multi if neg_prompt is not None else None, num_inference_steps=n_steps, width=width, height=height, generator=generator)
+	result = pipe.generate([prompt] * multi, negative_prompt=[neg_prompt] * multi if neg_prompt is not None else None, num_inference_steps=n_steps, width=width, height=height, generator=rand_generator)
 
 	if img_only is not None:
 		fp = io.BytesIO()
@@ -119,6 +120,7 @@ def paintByText ():
 		'prompt': prompt,
 		'images': [encodeImageToDataURL(img, {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
+		'seed': seed,
 	}
 
 	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
@@ -146,19 +148,21 @@ def img2img ():
 	#print('image:', image.size, scaling)
 
 	global pipe
+	global rand_generator
 
-	generator = None
 	if seed is not None:
-		generator = torch.Generator(pipe.device)
-		generator.manual_seed(seed)
+		rand_generator.manual_seed(seed)
+	else:
+		seed = rand_generator.seed()
 
-	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=generator)
+	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=rand_generator)
 
 	result = {
 		'prompt': prompt,
 		'source': encodeImageToDataURL(image),
 		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt, 'seed': str(seed)}),
 		'latent': result['latents'][0],
+		'seed': seed,
 	}
 
 	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
@@ -224,12 +228,14 @@ def randomSentenceV2 ():
 
 
 def main (argv):
-	global pipe, senGen2, senGen
+	global pipe, senGen2, senGen, rand_generator
 	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN, torch_dtype=torch.float32)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
 	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
 	senGen2 = SentenceGeneratorV2(TEXTGEN_MODEL_PATH, pipe.tokenizer, device=device)
+
+	rand_generator = torch.Generator(device)
 
 	if DEVICE:
 		pipe.to(DEVICE)
