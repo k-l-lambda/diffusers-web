@@ -155,6 +155,8 @@
 					this.description = info.prompt;
 					this.negativeDescription = info.negative_prompt
 					this.seed = Number(info.seed);
+					if (info.resolution)
+						[this.width, this.height] = info.resolution.split("x").map(Number);
 				}
 			},
 

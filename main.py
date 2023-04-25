@@ -35,6 +35,8 @@ TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
 
+MODEL_NAME = os.path.basename(DIFFUSER_MODEL_PATH)
+
 TEMPERATURE = 4.
 
 
@@ -118,7 +120,13 @@ def paintByText ():
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, {'prompt': prompt, 'seed': str(seed), 'negative_prompt': neg_prompt}, ext=f'.{ext}') for img in result['images']],
+		'images': [encodeImageToDataURL(img, {
+			'prompt': prompt,
+			'seed': str(seed),
+			'negative_prompt': neg_prompt,
+			'model': MODEL_NAME,
+			'resolution': f'{width}x{height}',
+		}, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
 		'seed': seed,
 	}
@@ -160,7 +168,7 @@ def img2img ():
 	result = {
 		'prompt': prompt,
 		'source': encodeImageToDataURL(image),
-		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt, 'seed': str(seed)}),
+		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt, 'seed': str(seed), 'model': MODEL_NAME}),
 		'latent': result['latents'][0],
 		'seed': seed,
 	}
