@@ -52,6 +52,7 @@
 			</section>
 		</main>
 		<button class="purge" @click="purgeList">&#x2421;</button>
+		<button class="pick-img" @click="pickImage">..</button>
 	</div>
 </template>
 
@@ -145,8 +146,7 @@
 			},
 
 
-			async onDrop (event) {
-				const file = event.dataTransfer.files[0];
+			async loadImage (file) {
 				const tags = await ExifReader.load(file);
 				//console.log('tags:', tags);
 				if (tags && tags.Software) {
@@ -161,6 +161,13 @@
 			},
 
 
+			onDrop (event) {
+				const file = event.dataTransfer.files[0];
+				if (file)
+					this.loadImage(file)
+			},
+
+
 			activateItem (item) {
 				this.description = item.prompt;
 				this.negativeDescription = item.negative;
@@ -171,7 +178,17 @@
 			purgeList () {
 				if (confirm("clear results?"))
 					this.results = [];
-			}
+			},
+
+
+			async pickImage () {
+				const url = window.prompt("Image URL");
+				if (url) {
+					const response = await fetch(url);
+					if (response.ok)
+						this.loadImage(await response.blob());
+				}
+			},
 		},
 	};
 </script>
@@ -191,16 +208,25 @@
 		background-color: #cfc;
 	}
 
-	.purge
+	.home > button
 	{
 		display: inline-block;
 		position: absolute;
-		bottom: 8px;
-		right: 8px;
 		background: none;
 		border: 0;
 		font-size: 200%;
 		color: #aaa;
+		right: 8px;
+	}
+
+	button.purge
+	{
+		bottom: 8px;
+	}
+
+	button.pick-img
+	{
+		bottom: 108px;
 	}
 
 	i
