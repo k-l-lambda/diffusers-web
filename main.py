@@ -129,6 +129,7 @@ def paintByText ():
 		}, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
 		'seed': seed,
+		'model': MODEL_NAME,
 	}
 
 	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
