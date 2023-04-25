@@ -33,18 +33,21 @@
 			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
 		</header>
 		<main ref="main">
-			<section v-for="(result, i) of results" :key="i">
-				<div>
+			<section class="item" v-for="(result, i) of results" :key="i">
+				<header>
 					<button class="activate" @click="activateItem(result)">^</button>
 					<em v-text="result.prompt"></em>
 					<i v-if="result.negative" :title="result.negative">&#x2d31;</i>
 					<span v-if="Number.isFinite(result.seed)">[{{result.seed}}]</span>
 					<span v-if="result.loading">...</span>
-				</div>
+				</header>
 				<div v-if="result.images">
-					<div class="picture" v-for="(img, ii) of result.images" :key="ii">
-						<img :src="img" @load="onImageLoad" />
-						<a class="download" :href="img" :download="`${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
+					<div class="picture-container" v-for="(img, ii) of result.images" :key="ii">
+						<div class="picture">
+							<img :src="img" @load="onImageLoad" />
+							<a class="download" :href="img" :download="`${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
+						</div>
+						<i class="favorite" :class="{done: result.favorited}" v-if="uploader" @click="favoriteImage(result, img)">&#x26e4;</i>
 					</div>
 				</div>
 				<p v-if="result.error" class="error" v-html="result.error"></p>
@@ -58,6 +61,7 @@
 
 <script>
 	import ExifReader from "exifreader";
+	import md5 from "md5";
 
 	import StoreInput from "./storeinput.vue";
 
@@ -92,6 +96,7 @@
 				requesting: false,
 				ext: "webp",
 				drageHover: false,
+				uploader: window.uploader,
 			};
 		},
 
@@ -108,6 +113,7 @@
 					negative: this.negativeDescription,
 					seed: this.seed,
 					loading: true,
+					favorited: false,
 				};
 				this.results.push(item);
 				this.requesting = true;
@@ -189,6 +195,42 @@
 						this.loadImage(await response.blob());
 				}
 			},
+
+
+			async favoriteImage (item, url) {
+				if (!this.uploader)
+					return;
+				const res = await fetch(url);
+				const file = await res.blob();
+
+				const data = {
+					model: item.model,
+					prompt: item.prompt,
+					negative: item.negative,
+					seed: item.seed,
+					resolution: item.resolution,
+				};
+				const hash = md5(JSON.stringify(data));
+
+				const body = new FormData();
+				body.append("file", file, `${this.uploader.dir}/${item.model}/${hash}.${this.ext}`);
+
+				const res2 = await fetch(this.uploader.host, {
+					method: "POST",
+					body,
+				});
+				if (res2.ok) {
+					const result = await res2.json();
+					if (result.result === "ok")
+						item.favorited = true;
+					else
+						console.warn("upload failed:", result);
+				}
+				else {
+					const result = await res2.text();
+					console.warn("upload failed:", result);
+				}
+			},
 		},
 	};
 </script>
@@ -231,10 +273,28 @@
 
 	i
 	{
-		font-weight: bold;
 		font-style: normal;
 		cursor: default;
+	}
+
+	.item header i
+	{
+		font-weight: bold;
 		color: #600;
+	}
+
+	.picture-container i
+	{
+		display: inline-block;
+		margin: 2em;
+		cursor: pointer;
+	}
+
+	i.favorite.done
+	{
+		font-weight: bold;
+		color: orange;
+		text-shadow: 1px 1px 2px orange;
 	}
 
 	.activate

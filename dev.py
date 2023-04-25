@@ -47,10 +47,14 @@ for path in pageRouters:
 def paintByText():
 	prompt = flask.request.args.get('prompt')
 	img_only = flask.request.args.get('img_only')
+	width = int(flask.request.args.get('w', 512))
+	height = int(flask.request.args.get('h', 512))
 
 	result = {
 		'prompt': prompt,
 		'images': ['/favicon.ico'],
+		'model': 'dev-test',
+		'resolution': f'{width}x{height}',
 	}
 
 	if img_only is not None:
