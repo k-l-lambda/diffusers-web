@@ -114,6 +114,7 @@
 					seed: this.seed,
 					loading: true,
 					favorited: false,
+					resolution: `${this.width}x${this.height}`,
 				};
 				this.results.push(item);
 				this.requesting = true;
