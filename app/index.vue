@@ -16,8 +16,8 @@
 			<StoreInput localKey="size_w" type="number" v-model="width" v-show="false" />
 			<StoreInput localKey="size_h" type="number" v-model="height" v-show="false" />
 			<StoreInput localKey="ext" type="text" v-model="ext" v-show="false" />
-			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
-			<input type="text" v-model.number="seed" placeholder="seed" :size="1" />
+			<input type="number" v-model.number="n_steps" min="1" max="250" :style="{width: '2.4em'}" />
+			<input type="text" v-model.number="seed" placeholder="seed" :size="2" @click="$event.target.select()" />
 			<!--select v-model.number="multi">
 				<option v-for="i of 4" :key="i" :value="i">{{i}}</option>
 			</select-->
