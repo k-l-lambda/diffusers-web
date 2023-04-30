@@ -8,8 +8,11 @@
 			<datalist id="description-list">
 				<option v-for="entry of descriptionHistory" :key="entry" :value="entry"></option>
 			</datalist>
+			<datalist id="negdesc-list">
+				<option v-for="entry of negdescHistory" :key="entry" :value="entry"></option>
+			</datalist>
 			<input class="description" v-model="description" list="description-list" type="text" placeholder="prompt text" />
-			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
+			<input class="neg-decription" v-model="negativeDescription" list="negdesc-list" type="text" placeholder="negative prompt text" />
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput localKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput localKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
@@ -20,6 +23,7 @@
 			<StoreInput localKey="size_h" type="number" v-model="height" v-show="false" />
 			<StoreInput localKey="ext" type="text" v-model="ext" v-show="false" />
 			<StoreInput localKey="descriptionHistory" type="text" v-model="descriptionHistory" v-show="false" />
+			<StoreInput localKey="negdescHistory" type="text" v-model="negdescHistory" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :style="{width: '2.4em'}" />
 			<input type="text" v-model.number="seed" placeholder="seed" :size="2" @click="$event.target.select()" />
 			<!--select v-model.number="multi">
@@ -102,6 +106,7 @@
 				drageHover: false,
 				uploader: window.uploader,
 				descriptionHistory: [],
+				negdescHistory: [],
 			};
 		},
 
@@ -125,6 +130,7 @@
 				this.requesting = true;
 
 				this.appendHistory(this.descriptionHistory, this.description);
+				this.appendHistory(this.negdescHistory, this.negativeDescription);
 
 				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description || "")}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}&ext=${this.ext}`;
 				if (Number.isInteger(this.seed))
@@ -171,14 +177,16 @@
 					this.seed = Number(info.seed);
 					if (info.resolution)
 						[this.width, this.height] = info.resolution.split("x").map(Number);
+
+					this.appendHistory(this.descriptionHistory, this.description);
+					this.appendHistory(this.negdescHistory, this.negativeDescription);
 				}
 			},
 
 
 			onDrop (event) {
-				const file = event.dataTransfer.files[0];
-				if (file)
-					this.loadImage(file)
+				for (const file of event.dataTransfer.files)
+					this.loadImage(file);
 			},
 
 
@@ -242,7 +250,7 @@
 
 
 			appendHistory (history, entry) {
-				if (!history.includes(entry)) {
+				if (entry && !history.includes(entry)) {
 					history.push(entry);
 					history.sort();
 				}
