@@ -5,7 +5,10 @@
 		@drop.prevent="onDrop"
 	>
 		<header>
-			<input class="description" v-model="description" type="text" placeholder="prompt text" />
+			<datalist id="description-list">
+				<option v-for="entry of descriptionHistory" :key="entry" :value="entry"></option>
+			</datalist>
+			<input class="description" v-model="description" list="description-list" type="text" placeholder="prompt text" />
 			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput localKey="description" type="text" v-model="description" v-show="false" />
@@ -16,6 +19,7 @@
 			<StoreInput localKey="size_w" type="number" v-model="width" v-show="false" />
 			<StoreInput localKey="size_h" type="number" v-model="height" v-show="false" />
 			<StoreInput localKey="ext" type="text" v-model="ext" v-show="false" />
+			<StoreInput localKey="descriptionHistory" type="text" v-model="descriptionHistory" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :style="{width: '2.4em'}" />
 			<input type="text" v-model.number="seed" placeholder="seed" :size="2" @click="$event.target.select()" />
 			<!--select v-model.number="multi">
@@ -97,6 +101,7 @@
 				ext: "webp",
 				drageHover: false,
 				uploader: window.uploader,
+				descriptionHistory: [],
 			};
 		},
 
@@ -118,6 +123,8 @@
 				};
 				this.results.push(item);
 				this.requesting = true;
+
+				this.appendHistory(this.descriptionHistory, this.description);
 
 				let url = `/paint-by-text?prompt=${encodeURIComponent(this.description || "")}&multi=${this.multi}&n_steps=${this.n_steps}&w=${this.width}&h=${this.height}&ext=${this.ext}`;
 				if (Number.isInteger(this.seed))
@@ -230,6 +237,14 @@
 				else {
 					const result = await res2.text();
 					console.warn("upload failed:", result);
+				}
+			},
+
+
+			appendHistory (history, entry) {
+				if (!history.includes(entry)) {
+					history.push(entry);
+					history.sort();
 				}
 			},
 		},
