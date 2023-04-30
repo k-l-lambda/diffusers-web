@@ -6,10 +6,10 @@
 	>
 		<header>
 			<datalist id="description-list">
-				<option v-for="entry of descriptionHistory" :key="entry" :value="entry"></option>
+				<option v-for="entry of sortedDescriptionHistory" :key="entry" :value="entry"></option>
 			</datalist>
 			<datalist id="negdesc-list">
-				<option v-for="entry of negdescHistory" :key="entry" :value="entry"></option>
+				<option v-for="entry of sortedNegdescHistory" :key="entry" :value="entry"></option>
 			</datalist>
 			<input class="description" v-model="description" list="description-list" type="text" placeholder="prompt text" />
 			<input class="neg-decription" v-model="negativeDescription" list="negdesc-list" type="text" placeholder="negative prompt text" />
@@ -108,6 +108,24 @@
 				descriptionHistory: [],
 				negdescHistory: [],
 			};
+		},
+
+
+		computed: {
+			sortedDescriptionHistory () {
+				const history = [...this.descriptionHistory];
+				history.sort();
+
+				return history;
+			},
+
+
+			sortedNegdescHistory () {
+				const history = [...this.negdescHistory];
+				history.sort();
+
+				return history;
+			},
 		},
 
 
@@ -252,7 +270,9 @@
 			appendHistory (history, entry) {
 				if (entry && !history.includes(entry)) {
 					history.push(entry);
-					history.sort();
+					//history.sort();
+					while (history.length > 100)
+						history.shift();
 				}
 			},
 		},
