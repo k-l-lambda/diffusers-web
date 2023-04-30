@@ -12,7 +12,9 @@
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps"  v-show="false" />
 			<StoreInput sessionKey="strength" type="number" v-model="strength" v-show="false" />
+			<StoreInput sessionKey="seed" type="number" v-model="seed" v-show="false" />
 			<input type="number" v-model.number="n_steps" min="1" max="250" :size="1" />
+			<input type="text" v-model.number="seed" placeholder="seed" :size="1" />
 			<input type="range" v-model.number="strength" min="0" max="1" step="any" />
 			<em title="strength">{{strength.toFixed(2)}}</em>
 			<button class="submit" @click="paint">&#x1f4ad;</button>
@@ -59,6 +61,7 @@
 				sourceURL: null,
 				drageHover: false,
 				strength: 0.5,
+				seed: null,
 			};
 		},
 
@@ -102,7 +105,11 @@
 				const form = new FormData();
 				form.append("image", image);
 
-				const response = await fetch(`/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}&strength=${this.strength}`, {
+				let url = `/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}&strength=${this.strength}`;
+				if (Number.isInteger(this.seed))
+					url += `&seed=${this.seed}`;
+
+				const response = await fetch(url, {
 					method: "POST",
 					body: form,
 				});

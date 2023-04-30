@@ -7,6 +7,7 @@ import json
 import io
 import PIL
 import PIL.PngImagePlugin
+import piexif
 import base64
 import math
 import torch
@@ -34,6 +35,8 @@ TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
 
+MODEL_NAME = os.path.basename(DIFFUSER_MODEL_PATH)
+
 TEMPERATURE = 4.
 
 
@@ -57,51 +60,76 @@ for path in pageRouters:
 	app.route(path, endpoint = 'handler' + path)(getHandler(pageRouters[path]))
 
 
-def encodeImageToDataURL (image, info=None):
+def encodeImageToDataURL (image, info=None, ext='.png'):
 	option = None
-	if info:
+	exif = None
+	if info and ext == '.png':
 		option = PIL.PngImagePlugin.PngInfo()
 		for key, value in info.items():
-			option.add_itxt(key, value)
+			if value is not None:
+				option.add_itxt(key, value)
+	else:
+		exif = piexif.dump({'0th': {305: json.dumps(info).encode('ascii')}})[6:]
 
 	fp = io.BytesIO()
-	image.save(fp, PIL.Image.registered_extensions()['.png'], pnginfo=option)
+	image.save(fp, PIL.Image.registered_extensions()[ext], pnginfo=option, exif=exif)
 
-	return 'data:image/png;base64,%s' % base64.b64encode(fp.getvalue()).decode('ascii')
+	return 'data:image/%s;base64,%s' % (ext[1:], base64.b64encode(fp.getvalue()).decode('ascii'))
 
 
 @app.route('/paint-by-text', methods=['GET'])
 def paintByText ():
 	prompt = flask.request.args.get('prompt')
+	neg_prompt = flask.request.args.get('neg_prompt', None)
 	multi = int(flask.request.args.get('multi', 1))
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	width = int(flask.request.args.get('w', 512))
 	height = int(flask.request.args.get('h', 512))
 	img_only = flask.request.args.get('img_only')
 	temperature = float(flask.request.args.get('temperature', 1))
+	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
+	ext = flask.request.args.get('ext', 'png')
 	#print('paint by text:', prompt, multi)
 
+	global senGen, senGen2
 	if prompt == '***':
 		prompt = senGen2.generate(temperature=temperature)
+	elif prompt == '**':
+		prompt = senGen.generate(temperature=temperature)
 
 	global pipe
-	result = pipe.generate([prompt] * multi, num_inference_steps=n_steps, width=width, height=height)
+	global rand_generator
+
+	if seed is not None:
+		rand_generator.manual_seed(seed)
+	else:
+		seed = rand_generator.seed()
+
+	result = pipe.generate([prompt] * multi, negative_prompt=[neg_prompt] * multi if neg_prompt is not None else None, num_inference_steps=n_steps, width=width, height=height, generator=rand_generator)
 
 	if img_only is not None:
 		fp = io.BytesIO()
-		result['images'][0].save(fp, PIL.Image.registered_extensions()['.png'])
+		result['images'][0].save(fp, PIL.Image.registered_extensions()[f'.{ext}'], quality=100)
 
-		res = flask.Response(fp.getvalue(), mimetype = 'image/png')
+		res = flask.Response(fp.getvalue(), mimetype = f'image/${ext}')
 
 		filename = re.sub(r'[^\w\s]', '', prompt)[:240].encode("ascii", "ignore").decode()
-		res.headers['Content-Disposition'] = f'inline; filename="{filename}.png"'
+		res.headers['Content-Disposition'] = f'inline; filename="{filename}.{ext}"'
 
 		return res
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, {'prompt': prompt}) for img in result['images']],
+		'images': [encodeImageToDataURL(img, {
+			'prompt': prompt,
+			'seed': str(seed),
+			'negative_prompt': neg_prompt,
+			'model': MODEL_NAME,
+			'resolution': f'{width}x{height}',
+		}, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
+		'seed': seed,
+		'model': MODEL_NAME,
 	}
 
 	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
@@ -112,6 +140,7 @@ def img2img ():
 	prompt = flask.request.args.get('prompt')
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	strength = float(flask.request.args.get('strength', 0.5))
+	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
 
 	imageFile = flask.request.files.get('image')
 	if not imageFile:
@@ -128,13 +157,21 @@ def img2img ():
 	#print('image:', image.size, scaling)
 
 	global pipe
-	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength)
+	global rand_generator
+
+	if seed is not None:
+		rand_generator.manual_seed(seed)
+	else:
+		seed = rand_generator.seed()
+
+	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=rand_generator)
 
 	result = {
 		'prompt': prompt,
 		'source': encodeImageToDataURL(image),
-		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt}),
+		'image': encodeImageToDataURL(result['images'][0], {'prompt': prompt, 'seed': str(seed), 'model': MODEL_NAME}),
 		'latent': result['latents'][0],
+		'seed': seed,
 	}
 
 	return flask.Response(json.dumps(result, ensure_ascii=True), mimetype='application/json')
@@ -200,12 +237,14 @@ def randomSentenceV2 ():
 
 
 def main (argv):
-	global pipe, senGen2
-	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN)
+	global pipe, senGen2, senGen, rand_generator
+	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN, torch_dtype=torch.float32)
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
-	#senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
+	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)
 	senGen2 = SentenceGeneratorV2(TEXTGEN_MODEL_PATH, pipe.tokenizer, device=device)
+
+	rand_generator = torch.Generator(device)
 
 	if DEVICE:
 		pipe.to(DEVICE)

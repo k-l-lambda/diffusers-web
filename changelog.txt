@@ -2,6 +2,31 @@
 TODO:
 
 
+2023.4.25	K.L.	<k.l.lambda@gmail.com>
+
+	+	index.vue: favorite button added.
+
+	+	main.py: save model name in image file.
+
+
+2023.4.24	K.L.	<k.l.lambda@gmail.com>
+
+	+	index.vue: recover parameters from webp implemented.
+
+	+	main.py: added global rand_generator.
+
+
+2023.3.8	K.L.	<k.l.lambda@gmail.com>
+
+	+	index.vue: added control of negative description.
+	+	index.vue: added control of seed.
+
+
+2022.11.26	K.L.	<k.l.lambda@gmail.com>
+
+	+	pipeline_stable_diffusion.py: upgrade generator pipeline to diffusers v0.9.
+
+
 2022.10.31	K.L.	<k.l.lambda@gmail.com>
 
 	+	main.py: appended prompt text in PNG file.

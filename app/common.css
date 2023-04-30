@@ -85,3 +85,17 @@ main section .error
 {
 	color: red;
 }
+
+@media (pointer:none), (pointer:coarse)
+{
+	html
+	{
+		font-size: 20px;
+	}
+
+	body
+	{
+		box-sizing: border-box;
+		padding: 2em 0 8em;
+	}
+}
