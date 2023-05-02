@@ -11,8 +11,8 @@
 			<datalist id="negdesc-list">
 				<option v-for="entry of sortedNegdescHistory" :key="entry" :value="entry"></option>
 			</datalist>
-			<input class="description" v-model="description" list="description-list" type="text" placeholder="prompt text" />
-			<input class="neg-decription" v-model="negativeDescription" list="negdesc-list" type="text" placeholder="negative prompt text" />
+			<input class="description" v-model="description" :list="!noInputList && 'description-list'" type="text" placeholder="prompt text" />
+			<input class="neg-decription" v-model="negativeDescription" :list="!noInputList && 'negdesc-list'" type="text" placeholder="negative prompt text" />
 			<button @click="rollDescription" title="Give me an idea.">&#x1f3b2;</button>
 			<StoreInput localKey="description" type="text" v-model="description" v-show="false" />
 			<StoreInput localKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
@@ -107,6 +107,7 @@
 				uploader: window.uploader,
 				descriptionHistory: [],
 				negdescHistory: [],
+				noInputList: /HeyTapBrowser/.test(navigator.userAgent),
 			};
 		},
 
