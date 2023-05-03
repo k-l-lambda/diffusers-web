@@ -36,14 +36,17 @@ const fetchOne = (fetcher, dir) => {
 const main = async argv => {
 	const listText = fs.readFileSync(argv[2]).toString();
 	const prompts = listText.split("\r\n");
-	const negPrompt = encodeURIComponent("painting, cartoon, (worst quality, low quality: 1.3), distorted fingers, extra fingers, bad fingers, fingers, cosmetics, moles under the eyes, moles, signs, watermarks, text");
+	const negPrompt = encodeURIComponent("anime, (worst quality, low quality:2), (normal quality:2), distorted fingers, extra fingers, watermarks, text");
 	const fetcher = prompt => fetch(`${argv[3]}/paint-by-text?prompt=${encodeURIComponent(prompt)}&neg_prompt=${negPrompt}&img_only&w=512&h=1024&n_steps=50&ext=webp`);
 	const dir = argv[4] || "./";
+
+	if (!fs.existsSync(dir))
+		fs.mkdirSync(dir);
 
 	let i = 0;
 	for (const prompt of prompts) {
 		try {
-			await fetchOne(() => fetcher("photorealistic, " + prompt), dir);
+			await fetchOne(() => fetcher("(masterpiece, best quality, beautiful and aesthetic:1.2), (1girl:1.3), photorealistic, " + prompt), dir);
 		}
 		catch(err) {
 			console.warn(i, err);
