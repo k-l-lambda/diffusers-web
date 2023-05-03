@@ -2,6 +2,11 @@
 TODO:
 
 
+2023.5.3	K.L.	<k.l.lambda@gmail.com>
+
+	+	main.py: added env variable of FLOAT16.
+
+
 2023.4.30	K.L.	<k.l.lambda@gmail.com>
 
 	+	index.vue: negdescHistory added.
