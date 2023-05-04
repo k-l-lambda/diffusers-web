@@ -108,9 +108,18 @@ def paintByText ():
 
 	result = pipe.generate([prompt] * multi, negative_prompt=[neg_prompt] * multi if neg_prompt is not None else None, num_inference_steps=n_steps, width=width, height=height, generator=rand_generator)
 
+	exif_info = {
+		'prompt': prompt,
+		'seed': str(seed),
+		'negative_prompt': neg_prompt,
+		'model': MODEL_NAME,
+		'resolution': f'{width}x{height}',
+	}
+
 	if img_only is not None:
 		fp = io.BytesIO()
-		result['images'][0].save(fp, PIL.Image.registered_extensions()[f'.{ext}'], quality=100)
+		exif = piexif.dump({'0th': {305: json.dumps(exif_info).encode('ascii')}})[6:]
+		result['images'][0].save(fp, PIL.Image.registered_extensions()[f'.{ext}'], quality=100, exif=exif)
 
 		res = flask.Response(fp.getvalue(), mimetype = f'image/${ext}')
 
@@ -121,13 +130,7 @@ def paintByText ():
 
 	result = {
 		'prompt': prompt,
-		'images': [encodeImageToDataURL(img, {
-			'prompt': prompt,
-			'seed': str(seed),
-			'negative_prompt': neg_prompt,
-			'model': MODEL_NAME,
-			'resolution': f'{width}x{height}',
-		}, ext=f'.{ext}') for img in result['images']],
+		'images': [encodeImageToDataURL(img, exif_info, ext=f'.{ext}') for img in result['images']],
 		'latents': result['latents'],
 		'seed': seed,
 		'model': MODEL_NAME,
