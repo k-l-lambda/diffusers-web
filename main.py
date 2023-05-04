@@ -97,7 +97,7 @@ def paintByText ():
 		prompt = senGen2.generate(temperature=temperature)
 	elif prompt == '**':
 		prompt = senGen.generate(temperature=temperature)
-	elif prompt.endswith('**')
+	elif prompt.endswith('**'):
 		prompt = prompt[:-2] + senGen.generate(temperature=temperature)
 
 	global pipe
