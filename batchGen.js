@@ -30,12 +30,16 @@ const fetchOne = (fetcher, dir) => {
 };
 
 
-const TOTAL = 200;
+const TOTAL = 5;
 
 
 const main = async argv => {
-	const fetcher = () => fetch(`${argv[2]}/paint-by-text?prompt=**&img_only&w=512&h=768&ext=webp`);
+	const negPrompt = encodeURIComponent("(worst quality, low quality:2), (normal quality:2), watermarks");
+	const fetcher = () => fetch(`${argv[2]}/paint-by-text?prompt=${encodeURI('(masterpiece, best quality, beautiful and aesthetic:1.2), ')}**&neg_prompt=${negPrompt}&img_only&w=768&h=1024&ext=webp&n_steps=60`);
 	const dir = argv[3] || "./";
+
+	if (!fs.existsSync(dir))
+		fs.mkdirSync(dir);
 
 	for (let i = 0; i < TOTAL; ++i) {
 		try {
