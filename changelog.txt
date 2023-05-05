@@ -2,6 +2,11 @@
 TODO:
 
 
+2023.5.5	K.L.	<k.l.lambda@gmail.com>
+
+	+	main.py: added env options of VAE_TILING & XFORMERS.
+
+
 2023.5.3	K.L.	<k.l.lambda@gmail.com>
 
 	+	main.py: added env variable of FLOAT16.

@@ -35,6 +35,8 @@ TEXTGEN_MODEL_PATH = os.getenv('TEXTGEN_MODEL_PATH')
 DEVICE = os.getenv('DEVICE')
 TEXT_DEVICE_INDEX = os.getenv('TEXT_DEVICE_INDEX')
 FLOAT16 = os.getenv('FLOAT16')
+VAE_TILING = os.getenv('VAE_TILING')
+XFORMERS = os.getenv('XFORMERS')
 
 MODEL_NAME = os.path.basename(DIFFUSER_MODEL_PATH)
 
@@ -245,6 +247,11 @@ def randomSentenceV2 ():
 def main (argv):
 	global pipe, senGen2, senGen, rand_generator
 	pipe = StableDiffusionPipeline.from_pretrained(DIFFUSER_MODEL_PATH, use_auth_token=HF_TOKEN, torch_dtype=torch.float16 if FLOAT16 else torch.float32)
+
+	if VAE_TILING:
+		pipe.vae.enable_tiling()
+	if XFORMERS:
+		pipe.enable_xformers_memory_efficient_attention()
 
 	device = torch.device(f'{DEVICE}:{TEXT_DEVICE_INDEX}') if DEVICE else None
 	senGen = SentenceGenerator(templates_path='corpus/templates.txt', reserved_path='corpus/reserved.txt', device=device)

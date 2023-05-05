@@ -13,3 +13,6 @@ Variable Name						| Default Value						| Description
 **SSL_CONTEXT**						| None								| Use `'adhoc'` for https server.
 **DEVICE**							|									| `cuda` or *None*
 **TEXT_DEVICE_INDEX**				| 0									| This can be greater than 0 if **CUDA_VISIBLE_DEVICES** has more than 1 gpu specified.
+**FLOAT16**							|									| Use float16 instead of float32 dtype for inference.
+**VAE_TILING**						|									| Enable VAE tiling.
+**XFORMERS**						|									| Call pipline's `enable_xformers_memory_efficient_attention`.
