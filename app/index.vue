@@ -31,11 +31,11 @@
 			</select-->
 			<span>
 				<select v-model.number="width">
-					<option v-for="i of 30" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
+					<option v-for="i of 60" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 				&times;
 				<select v-model.number="height">
-					<option v-for="i of 30" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
+					<option v-for="i of 60" :key="i" :value="64 * (i + 2)">{{64 * (i + 2)}}</option>
 				</select>
 			</span>
 			<button class="submit" :class="{active: requesting}" @click="paintByText">&#x1f4ad;</button>
