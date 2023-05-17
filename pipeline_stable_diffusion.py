@@ -648,6 +648,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 
 		if not isinstance(init_image, torch.FloatTensor):
 			init_image = preprocess(init_image)
+			init_image = init_image.to(self.vae.dtype)
 
 		# encode the init image into latents and scale the latents
 		init_latent_dist = self.vae.encode(init_image.to(self.device)).latent_dist
@@ -726,7 +727,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 				t = t.to(self.unet.dtype)
 
 			# predict the noise residual
-			noise_pred = self.unet(latent_model_input, t, encoder_hidden_states=text_embeddings).sample
+			noise_pred = self.unet(latent_model_input.to(self.unet.dtype), t.to(self.unet.dtype), encoder_hidden_states=text_embeddings.to(self.unet.dtype)).sample
 
 			# perform guidance
 			if do_classifier_free_guidance:
