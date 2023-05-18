@@ -27,7 +27,11 @@
 					<span>&#x21e8;</span>
 					<div class="picture">
 						<img v-if="result.target" :src="result.target" />
-						<a class="download" :href="result.target" :download="`[conversion]${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`">&#x2913;</a>
+						<a class="download"
+							:href="result.target"
+							:download="`[conversion]${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`"
+							:id="i === results.length - 1 ? 'last-link' : null"
+						>&#x2913;</a>
 					</div>
 				</div>
 				<p v-if="result.error" class="error" v-html="result.error"></p>
@@ -124,6 +128,8 @@
 					item.error = await response.text();
 
 				item.loading = false;
+
+				await this.$nextTick();
 			},
 		},
 	};
