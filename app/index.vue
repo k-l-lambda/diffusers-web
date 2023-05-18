@@ -45,8 +45,8 @@
 				<header>
 					<button class="activate" @click="activateItem(result)">^</button>
 					<em v-text="result.prompt"></em>
-					<i v-if="result.negative" :title="result.negative">&#x2d31;</i>
-					<span v-if="Number.isFinite(result.seed)">[{{result.seed}}]</span>
+					<i v-if="result.negative" :title="result.negative" @click="negativeDescription = result.negative">&#x2d31;</i>
+					<span v-if="Number.isFinite(result.seed)" @click="seed = result.seed">[{{result.seed}}]</span>
 					<span v-if="result.loading">...</span>
 				</header>
 				<div v-if="result.images">
