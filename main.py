@@ -156,7 +156,7 @@ def img2img ():
 
 	image = PIL.Image.open(imageFile.stream)
 
-	PIXELS_SIZE = 640 * 640
+	PIXELS_SIZE = 1024 * 1024
 	w, h = image.size
 	scaling = 1 if w * h <= PIXELS_SIZE else math.sqrt(PIXELS_SIZE / (w * h))
 	w, h = round(w * scaling / 64.) * 64, round(h * scaling / 64.) * 64
