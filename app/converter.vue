@@ -19,14 +19,14 @@
 			<em title="strength">{{strength.toFixed(2)}}</em>
 			<button class="submit" @click="paint">&#x1f4ad;</button>
 		</header>
-		<main>
+		<main ref="main">
 			<section v-for="(result, i) of results" :key="i">
 				<div><em v-text="result.prompt"></em><span v-if="result.loading">...</span></div>
 				<div class="images" v-if="result.source">
 					<img v-if="result.source" :src="result.source" />
 					<span>&#x21e8;</span>
 					<div class="picture">
-						<img v-if="result.target" :src="result.target" />
+						<img v-if="result.target" :src="result.target" @load="onImageLoad" />
 						<a class="download"
 							:href="result.target"
 							:download="`[conversion]${result.prompt && result.prompt.replace(/[^\w\s]/g, '').substr(0, 240)}.png`"
@@ -92,6 +92,11 @@
 				if (file)
 					if (/^image/.test(file.type))
 						this.sourceURL = URL.createObjectURL(file);
+			},
+
+
+			onImageLoad () {
+				this.$refs.main.scrollTo(0, this.$refs.main.scrollHeight);
 			},
 
 
