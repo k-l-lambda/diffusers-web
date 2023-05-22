@@ -9,7 +9,9 @@
 		<header>
 			<img class="source" :src="sourceURL" :class="{'drop-hover': drageHover}" />
 			<input class="description" v-model="description" type="text" placeholder="prompt text" />
+			<input class="neg-decription" v-model="negativeDescription" type="text" placeholder="negative prompt text" />
 			<StoreInput sessionKey="description" type="text" v-model="description" v-show="false" />
+			<StoreInput sessionKey="negativeDescription" type="text" v-model="negativeDescription" v-show="false" />
 			<StoreInput sessionKey="n_steps" type="number" v-model="n_steps"  v-show="false" />
 			<StoreInput sessionKey="strength" type="number" v-model="strength" v-show="false" />
 			<StoreInput sessionKey="seed" type="number" v-model="seed" v-show="false" />
@@ -60,6 +62,7 @@
 		data () {
 			return {
 				description: null,
+				negativeDescription: null,
 				results: [],
 				n_steps: 50,
 				sourceURL: null,
@@ -103,6 +106,7 @@
 			async paint () {
 				const item = {
 					prompt: this.description,
+					negative: this.negativeDescription,
 					source: null,
 					target: null,
 					loading: true,
@@ -117,6 +121,8 @@
 				let url = `/img2img?prompt=${encodeURIComponent(this.description)}&n_steps=${this.n_steps}&strength=${this.strength}`;
 				if (Number.isInteger(this.seed))
 					url += `&seed=${this.seed}`;
+				if (this.negativeDescription)
+					url += `&neg_prompt=${encodeURIComponent(this.negativeDescription)}`;
 
 				const response = await fetch(url, {
 					method: "POST",
