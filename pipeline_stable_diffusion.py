@@ -581,6 +581,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		strength: float = 0.8,
 		num_inference_steps: Optional[int] = 50,
 		guidance_scale: Optional[float] = 7.5,
+		negative_prompt: Optional[Union[str, List[str]]] = None,
 		eta: Optional[float] = 0.0,
 		generator: Optional[torch.Generator] = None,
 		output_type: Optional[str] = "pil",
@@ -674,7 +675,7 @@ class StableDiffusionPipeline (DiffusionPipeline):
 		init_latents = self.scheduler.add_noise(init_latents, noise, timesteps).to(self.device)
 
 		# get prompt text embeddings
-		text_input = self.tokenizer(
+		'''text_input = self.tokenizer(
 			prompt,
 			padding="max_length",
 			max_length=self.tokenizer.model_max_length,
@@ -698,7 +699,11 @@ class StableDiffusionPipeline (DiffusionPipeline):
 			# For classifier free guidance, we need to do two forward passes.
 			# Here we concatenate the unconditional and text embeddings into a single batch
 			# to avoid doing two forward passes
-			text_embeddings = torch.cat([uncond_embeddings, text_embeddings])
+			text_embeddings = torch.cat([uncond_embeddings, text_embeddings])'''
+		do_classifier_free_guidance = guidance_scale > 1.0
+		text_embeddings = self._encode_prompt(
+			prompt, self.device, 1, do_classifier_free_guidance, negative_prompt
+		)
 
 		# prepare extra kwargs for the scheduler step, since not all schedulers have the same signature
 		# eta (η) is only used with the DDIMScheduler, it will be ignored for other schedulers.

@@ -146,6 +146,7 @@ def paintByText ():
 @app.route('/img2img', methods=['POST'])
 def img2img ():
 	prompt = flask.request.args.get('prompt')
+	neg_prompt = flask.request.args.get('neg_prompt', None)
 	n_steps = int(flask.request.args.get('n_steps', 50))
 	strength = float(flask.request.args.get('strength', 0.5))
 	seed = flask.request.args.get('seed') and int(flask.request.args.get('seed'))
@@ -172,7 +173,7 @@ def img2img ():
 	else:
 		seed = rand_generator.seed()
 
-	result = pipe.convert(prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=rand_generator)
+	result = pipe.convert(prompt, negative_prompt=neg_prompt, init_image=image, num_inference_steps=n_steps, strength=strength, generator=rand_generator)
 
 	result = {
 		'prompt': prompt,
