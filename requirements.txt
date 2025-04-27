@@ -6,3 +6,4 @@ diffusers==0.9.0
 torch
 transformers
 piexif
+werkzeug==2.3.7
